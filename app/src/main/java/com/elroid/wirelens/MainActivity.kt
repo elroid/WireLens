@@ -1,15 +1,10 @@
 package com.elroid.wirelens
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.assist.FailReason
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
@@ -41,7 +36,9 @@ class MainActivity : AppCompatActivity() {
             val imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri?
             Timber.d("Got imageUri: %s", imageUri)
             if (imageUri != null) {
-                val imageLoader = ImageLoader.getInstance() // Get singleton instance
+                val file = FileUtils.pickedExistingPicture(this, imageUri)
+                Timber.d("Got file: %s", file)
+                /*val imageLoader = ImageLoader.getInstance() // Get singleton instance
 
                 // Load image, decode it to Bitmap and return Bitmap to callback
                 imageLoader.loadImage(imageUri.toString(), object : SimpleImageLoadingListener() {
@@ -64,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                         Timber.d("Loading failed: %s", failReason)
                         super.onLoadingFailed(imageUri, view, failReason)
                     }
-                })
+                })*/
             }
             /*val data: Uri? = intent.getData()
             val clipData: ClipData? = intent.clipData
