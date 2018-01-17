@@ -1,4 +1,4 @@
-package com.elroid.wirelens;
+package com.elroid.wirelens.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,7 +17,7 @@ import java.util.UUID;
 import timber.log.Timber;
 
 /**
- * Class: com.elroid.wirelens.FileUtils
+ * Class: com.elroid.wirelens.util.FileUtils
  * Project: WireLens
  * Created Date: 18/12/2017 18:10
  *
@@ -28,7 +28,7 @@ public class FileUtils
 {
 	private static final String DEFAULT_FOLDER_NAME = "images";
 
-	static File pickedExistingPicture(@NonNull Context context, @Nullable Uri photoUri) throws IOException{
+	public static File pickedExistingPicture(@NonNull Context context, @Nullable Uri photoUri) throws IOException{
 		Timber.d("pickedExistingPicture(context:%s, photoUri:%s)", context, photoUri);
 		if(photoUri == null) return null;
 		InputStream pictureInputStream = context.getContentResolver().openInputStream(photoUri);

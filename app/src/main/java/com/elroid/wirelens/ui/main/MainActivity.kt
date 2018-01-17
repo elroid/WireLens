@@ -1,10 +1,12 @@
-package com.elroid.wirelens
+package com.elroid.wirelens.ui.main
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import com.elroid.wirelens.util.FileUtils
+import com.elroid.wirelens.R
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 

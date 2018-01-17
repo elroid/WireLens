@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "wirelens-191109",
+  "private_key_id": "ebd7f2697b3b8326b34c3cf9dfe592be1331df8c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCvDL/P39JTmsvR\n6bdoTjy98sutuIMrlyngD5cYDpzj8nD5wQf1RCGHu7m3eKqvKgxOgw7tLZW/ZTSC\nhsEmoSSeLXiGIQJeH4prlRjHe8twnag0XIEsU62586nzeNvYCkZv1DiwEFr8A5Fj\ntDLJtAwEE+EiLDojbkuieSGBAxuQPjWAbsT+u7f2/NR5YCaLzgwQEyJZU7F5fI4J\n9TCqBZRr73u/RYNTbjBZa61ai1lPAEbmYsuVXjvwE9vqgHx72gIH6aKggtBsQ4+r\nv1G/35rskXNJk0nTjelBP2+GOqwM26YF7HX89LBwSHFuSold/6ysGOBb4IaeBuNA\nvmp6XvabAgMBAAECggEAMVnST/xFk01+bflKvGzmQhUL6DevP2BYLXOnwOAJylgF\nEtyhbjvdiiNaOggactTTcGURlbt2zuVs9umf1dCzfqbKJmJzBO82epsnx8G2etLv\n44c64bDbtyOjg+FMda176zY1HyoVRJyK5kWc1fHdO18RZy153JhRWYZ19CXYpQL1\nG34GxiFtthzVGs8VIC2A/O9SoMoPDzKBN3rEx6x/l88ulRtGF3hM0qtwEN6TZm+l\nzMKxsHrU1gu2odRM/EiRslLQuWD6yORJ1kZMC9sTPP9Z4MPoyWkYUxqLW14oQCML\nXygTRElC3ZP8A62m41ivrSNZu49oMOizHN7uJd59JQKBgQDlPdM3vcyZbERiNEGB\nXdMYsexvHB8lBJRZTNzWAudqBZoWnWfXbooFm6SlNolUNJK1knq7QE/ElXiV6ZSJ\nCIQz+ct164RteTWwzskUyzaKwhOz1pH8vSD+D0OztHEms7X4LVVUFiIBMML8Iul9\nFCmYEynkoUNucL4tzEj5idEqLQKBgQDDe5KI/a1NHcnWv2e7y4WQqZi+TtrA8AE6\n6VXzqMF/K4NwK8uZ6c31pc+Vkp0n0V/h1gepbO3cKS76FQbf6ccSyVppFhjCEZyA\nj+jwen7NgaeO8JKr8cXFOL8hamsi0XFkWqGdeSnqkonLLNUdNLgzbZ03nQfFWgSP\nfzlNJ2KI5wKBgQCA9BBW8NuhCnhFTePzY9YVtDCuKAGVD0hsG4K2mJeY2mHditoZ\nI8NceDtb/Juv1IsavLVxlDHLAdH9cpHtq+7CVigPw1aRRnffZ9NRcSbTU21F4tPo\nenOOtwN8mWp1PO6GFupDDNhAFy/4KaNyit8C/vS3+cc23xD8Lkh2pwIUWQKBgD+n\nEUQCNlgSBxMiKEkCMG+2icIOMzT38a6ZJB+/J6KdLKNt31Iyy5ndcAaoQvwgNTR4\nWO5WRe2Wi3FrP13R5by8S/BD/bPTwD4snhEQEhIg0cq9k0Th6SAbJkFfQZuIz395\n834vYfK73JqH8q0b6Y71dmgRfeJJOYrwRlxVIsSpAoGAbrlD1JsNxUe5x8YVQLbG\n2eKcoiQ84+kuh21oOttP1A0qUEv/+iAuE1welMevoeiwjWMh8CruxHUBsXM1SQ5h\nQcmwaksj3bVDMLiBIY1CyhbNoT8IysyoXaI9ioCscBLGZfCA4KVsGPtM/c4J9QJz\nhpRlDCYi5VvluTY5GuNuBR4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "androidapp@wirelens-191109.iam.gserviceaccount.com",
+  "client_id": "110421856532684264548",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/androidapp%40wirelens-191109.iam.gserviceaccount.com"
+}
