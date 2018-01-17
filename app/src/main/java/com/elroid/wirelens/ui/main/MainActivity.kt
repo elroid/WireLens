@@ -1,19 +1,22 @@
 package com.elroid.wirelens.ui.main
 
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
-import com.elroid.wirelens.util.FileUtils
 import com.elroid.wirelens.R
+import com.elroid.wirelens.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
-    val MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1
+    companion object create {
+        fun intent(ctx: Context): Intent {
+            return Intent(ctx, MainActivity::class.java)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,80 +34,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(photoPickerIntent, INTENT_REQUEST_CODE_SELECT_PHOTO)
         }
 
-        // Get the intent that started this activity
-        val intent: Intent? = getIntent()
-        Timber.d("got intent: %s", intent)
-        if (intent != null) {
-            val imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri?
-            Timber.d("Got imageUri: %s", imageUri)
-            if (imageUri != null) {
-                val file = FileUtils.pickedExistingPicture(this, imageUri)
-                Timber.d("Got file: %s", file)
-                /*val imageLoader = ImageLoader.getInstance() // Get singleton instance
 
-                // Load image, decode it to Bitmap and return Bitmap to callback
-                imageLoader.loadImage(imageUri.toString(), object : SimpleImageLoadingListener() {
-                    override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
-                        // Do whatever you want with Bitmap
-                        Timber.i("Got bitmap: %s", loadedImage)
-                    }
-
-                    override fun onLoadingStarted(imageUri: String?, view: View?) {
-                        Timber.d("Loading started: %s", imageUri)
-                        super.onLoadingStarted(imageUri, view)
-                    }
-
-                    override fun onLoadingCancelled(imageUri: String?, view: View?) {
-                        Timber.d("Loading cancelled: %s", imageUri)
-                        super.onLoadingCancelled(imageUri, view)
-                    }
-
-                    override fun onLoadingFailed(imageUri: String?, view: View?, failReason: FailReason?) {
-                        Timber.d("Loading failed: %s", failReason)
-                        super.onLoadingFailed(imageUri, view, failReason)
-                    }
-                })*/
-            }
-            /*val data: Uri? = intent.getData()
-            val clipData: ClipData? = intent.clipData
-            //val item = clip?.getItemAt(0)
-
-            // Tries to get the item's contents as a URI pointing to a note
-            //val uri = item?.uri
-            //Timber.d("Got uri: %s", uri)
-
-            val files = ArrayList<File>()
-
-            val imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri?
-            Timber.d("Got imageUri: %s", imageUri)
-
-            if (clipData != null) {
-                for (i in 0 until clipData.getItemCount()) {
-                    val uri = clipData.getItemAt(i).getUri()
-                    val file = FileUtils.pickedExistingPicture(this, uri)
-                    files.add(file)
-                }
-            } else if(data != null){
-                val file = FileUtils.pickedExistingPicture(this, data)
-                files.add(file)
-            }
-
-            Timber.d("Got file paths: %s", files)*/
-
-            /*val filePath = getImageUrlWithAuthority(this, data)
-            Timber.d("Got file path: %s", filePath)*/
-
-            // Figure out what to do based on the intent type
-            /*if (intent.type?.indexOf("image/") != -1) {
-                // Handle intents with image data ...
-                Timber.d("got image from intent: %s", data)
-                val filePath = getImageUrlWithAuthority(this, data)
-                Timber.d("Got file path: %s", filePath)
-            } else *//*if (intent.getType()?.equals("text/plain"))*//* {
-                // Handle intents with text ...
-                Timber.d("got text from intent: %s", data)
-            }*/
-        }
     }
 
 
