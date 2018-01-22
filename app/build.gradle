@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -15,14 +16,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //buildConfigField "String", "API_KEY", "\"AIzaSyCIULxJ7Fe_2wL_S1eaxSKmKDBRXRMEYn4\""
         buildConfigField "String", "ACCESS_TOKEN", "\"ya29.c.El84BTh8pts-900TOpIsx47rEYIeYarYCK0IxD5CEKzZHJ0OFQXV4g5h3Pgv-6fuRgW1zvMlnaGUaNzIsFnTWessZ_KDfWhLiJmoB0tAnNj23lspioin6zcixQLuLNC1jw\""
-        /*
-        curl -s -H 'Content-Type: application/json' -H 'Authorization: Bearer ACCESS_TOKEN' 'https://vision.googleapis.com/v1/images:annotate' -d @request.json
-         */
+
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
     }
+
+    sourceSets {
+        //Dedicated directories for tests written in Kotlin
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -45,54 +51,64 @@ project.ext {
     rxJavaVersion = "2.1.0"
     rxAndroidVersion = "2.0.1"
     rxRelayVersion = "2.0.0"
-    timberVersion = "4.5.1"
+    timberVersion = "4.6.0"
     retrofitVersion = "2.3.0"
+    espressoVersion = "3.0.1"
+    supportTestVersion = "1.0.1"
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Project-specific
     //compile 'com.github.jkwiecien:EasyImage:2.0.4'
     //compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.squareup.okhttp3:okhttp:3.9.1'
-    compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
-    compile "com.squareup.retrofit2:converter-jackson:$project.retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+    //compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-jackson:$project.retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
 
     // Android support libs
-    compile "com.android.support:appcompat-v7:$project.supportLibraryVersion"
+    implementation "com.android.support:appcompat-v7:$project.supportLibraryVersion"
     implementation "com.android.support:design:$project.supportLibraryVersion"
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
 
     // Dagger core
-    annotationProcessor "com.google.dagger:dagger-compiler:$project.daggerVersion"
-    compile "com.google.dagger:dagger:$project.daggerVersion"
+    implementation "com.google.dagger:dagger:$project.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$project.daggerVersion"
 
     // Dagger Android
-    annotationProcessor "com.google.dagger:dagger-android-processor:$project.daggerVersion"
-    compile "com.google.dagger:dagger-android-support:$project.daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$project.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
 
     // ButterKnife
-    compile "com.jakewharton:butterknife:$project.butterKnifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$project.butterKnifeVersion"
+    implementation "com.jakewharton:butterknife:$project.butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$project.butterKnifeVersion"
 
     // ReactiveX
-    compile "io.reactivex.rxjava2:rxjava:$project.rxJavaVersion"
-    compile "io.reactivex.rxjava2:rxandroid:$project.rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$project.rxJavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$project.rxAndroidVersion"
 
     // RxRelay
-    compile "com.jakewharton.rxrelay2:rxrelay:$project.rxRelayVersion"
+    implementation "com.jakewharton.rxrelay2:rxrelay:$project.rxRelayVersion"
 
     // Timber
-    compile "com.jakewharton.timber:timber:$project.timberVersion"
+    implementation "com.jakewharton.timber:timber:$project.timberVersion"
 
     // Testing
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.robolectric:robolectric:3.2.1"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$project.kotlinVersion"
+    testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    testImplementation 'org.amshove.kluent:kluent:1.14'
+
+    androidTestImplementation "com.android.support.test:runner:$project.supportTestVersion"
+    androidTestImplementation "com.android.support.test:rules:$project.supportTestVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$project.espressoVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-intents:$project.espressoVersion"
+    androidTestImplementation "com.android.support:support-annotations:$project.supportLibraryVersion"
 }

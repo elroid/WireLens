@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import com.elroid.wirelens.domain.DataManager
 import com.elroid.wirelens.ui.base.BaseActivity
 import com.elroid.wirelens.util.FileUtils
 import timber.log.Timber
@@ -17,11 +18,11 @@ import timber.log.Timber
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-class ImporterActivity : BaseActivity() {
+class ImporterKotlinActivity : BaseActivity() {
 
     companion object i {
         fun createIntent(ctx: Context): Intent {
-            return Intent(ctx, ImporterActivity::class.java)
+            return Intent(ctx, ImporterKotlinActivity::class.java)
         }
     }
 

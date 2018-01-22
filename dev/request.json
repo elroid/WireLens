@@ -1,0 +1,17 @@
+{
+  "requests": [
+	{
+	  "image": {
+		"source": {
+		  "imageUri": "http://elroid.com/wirelens/droidcon.jpg"
+		}
+	  },
+	  "features": [
+		{
+		  "type": "TEXT_DETECTION",
+		  "maxResults": 10
+		}
+	  ]
+	}
+  ]
+}

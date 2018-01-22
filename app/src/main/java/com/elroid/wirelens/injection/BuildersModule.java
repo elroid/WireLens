@@ -1,5 +1,7 @@
 package com.elroid.wirelens.injection;
 
+import com.elroid.wirelens.ui.importer.ImporterActivity;
+
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
@@ -16,6 +18,9 @@ public abstract class BuildersModule {
 
 	/*@ContributesAndroidInjector(modules = {LobbyViewModule.class, LobbyModule.class})
 	abstract LobbyActivity bindLobbyActivity();*/
+
+	@ContributesAndroidInjector
+	abstract ImporterActivity bindImporterActivity();
 
 	// Add bindings for other sub-components here
 }

@@ -5,10 +5,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.webkit.MimeTypeMap;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +36,7 @@ public class FileUtils
 		if(photoUri == null) return null;
 		InputStream pictureInputStream = context.getContentResolver().openInputStream(photoUri);
 		File directory = tempImageDirectory(context);
-		File photoFile = new File(directory, UUID.randomUUID().toString() + "." + getMimeType(context, photoUri));
+		File photoFile = new File(directory, UUID.randomUUID().toString() + "." + getExtension(context, photoUri));
 		photoFile.createNewFile();
 		writeToFile(pictureInputStream, photoFile);
 		return photoFile;
@@ -64,7 +67,7 @@ public class FileUtils
 	 * To find out the extension of required object in given uri
 	 * Solution by http://stackoverflow.com/a/36514823/1171484
 	 */
-	private static String getMimeType(@NonNull Context context, @NonNull Uri uri) {
+	public static String getExtension(@NonNull Context context, @NonNull Uri uri) {
 		String extension;
 
 		//Check uri format to avoid null

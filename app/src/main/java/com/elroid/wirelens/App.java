@@ -3,7 +3,6 @@ package com.elroid.wirelens;
 import android.app.Activity;
 import android.app.Application;
 
-import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.injection.DaggerAppComponent;
 
 import javax.inject.Inject;
@@ -27,10 +26,10 @@ public class App extends Application implements HasActivityInjector
 	DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 
 	@Override
-	public void onCreate() {
+	public void onCreate(){
 		super.onCreate();
 
-		if (BuildConfig.DEBUG) {
+		if(BuildConfig.DEBUG){
 			Timber.plant(new Timber.DebugTree());
 		}
 
@@ -42,7 +41,7 @@ public class App extends Application implements HasActivityInjector
 	}
 
 	@Override
-	public AndroidInjector<Activity> activityInjector() {
+	public AndroidInjector<Activity> activityInjector(){
 		return dispatchingAndroidInjector;
 	}
 }
