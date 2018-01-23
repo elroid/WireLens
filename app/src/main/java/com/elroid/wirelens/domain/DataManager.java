@@ -31,7 +31,8 @@ public class DataManager
 	}
 
 	public Single<GoogleVisionResponse> extractText(File imgFile){
-		return Single.error(new Exception("Not yet implemented"));
+		//return Single.error(new Exception("Not yet implemented"));
+		return retrieveRemoteGoogleVisionResponse(imgFile);
 	}
 
 	public Single<GoogleVisionResponse> retrieveRemoteGoogleVisionResponse(File imgFile){

@@ -34,10 +34,10 @@ public class App extends Application implements HasActivityInjector
 		}
 
 		DaggerAppComponent
-				.builder()
-				.application(this)
-				.build()
-				.inject(this);
+			.builder()
+			.application(this)
+			.build()
+			.inject(this);
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.elroid.wirelens.domain;
 
+import android.graphics.Bitmap;
+
 import com.elroid.wirelens.model.GoogleVisionResponse;
 
 import java.io.File;
@@ -17,4 +19,5 @@ import io.reactivex.Single;
 public interface GoogleVisionRemoteRepository
 {
 	Single<GoogleVisionResponse> getVisionResponse(File imgFile);
+	Single<GoogleVisionResponse> getVisionResponse(Bitmap bitmap);
 }

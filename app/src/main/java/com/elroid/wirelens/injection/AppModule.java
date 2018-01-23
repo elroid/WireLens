@@ -16,8 +16,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 /**
  * Class: com.elroid.wirelens.injection.AppModule
@@ -44,24 +42,14 @@ public class AppModule
 
 	@Provides
 	@Singleton
-	GoogleVisionRemoteRepository provideGoogleVisionRemote(){
-		return new GoogleVisionServiceClient();
+	GoogleVisionRemoteRepository provideGoogleVisionRemote(Context ctx){
+		return new GoogleVisionServiceClient(ctx);
 	}
 
 	@Provides
 	@Singleton
 	DataManager provideDataManager(GoogleVisionLocalRepository gvLocal, GoogleVisionRemoteRepository gvRemote){
 		return new DataManager(gvLocal, gvRemote);
-	}
-
-	@Provides
-	@Singleton
-	Retrofit.Builder provideRestAdapterBuilder(OkHttpClient client){
-		return new Retrofit.Builder()
-				//.addConverterFactory(new NullOnEmptyConverterFactory())
-				//.addConverterFactory(GsonConverterFactory.create(gson))
-				.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-				.client(client);
 	}
 
 	@Provides

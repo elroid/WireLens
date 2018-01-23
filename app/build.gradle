@@ -14,8 +14,8 @@ android {
         versionCode 1
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        //buildConfigField "String", "API_KEY", "\"AIzaSyCIULxJ7Fe_2wL_S1eaxSKmKDBRXRMEYn4\""
-        buildConfigField "String", "ACCESS_TOKEN", "\"ya29.c.El84BTh8pts-900TOpIsx47rEYIeYarYCK0IxD5CEKzZHJ0OFQXV4g5h3Pgv-6fuRgW1zvMlnaGUaNzIsFnTWessZ_KDfWhLiJmoB0tAnNj23lspioin6zcixQLuLNC1jw\""
+        buildConfigField "String", "API_KEY", "\"AIzaSyCIULxJ7Fe_2wL_S1eaxSKmKDBRXRMEYn4\""
+        //buildConfigField "String", "ACCESS_TOKEN", "\"ya29.c.El84BTh8pts-900TOpIsx47rEYIeYarYCK0IxD5CEKzZHJ0OFQXV4g5h3Pgv-6fuRgW1zvMlnaGUaNzIsFnTWessZ_KDfWhLiJmoB0tAnNj23lspioin6zcixQLuLNC1jw\""
 
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
@@ -65,9 +65,11 @@ dependencies {
     //compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    //compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-jackson:$project.retrofitVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
+
+    //google vision
+    implementation 'com.google.api-client:google-api-client-android:1.20.0' exclude module: 'httpclient'
+    implementation 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
+    implementation 'com.google.apis:google-api-services-vision:v1-rev368-1.23.0'
 
     // Android support libs
     implementation "com.android.support:appcompat-v7:$project.supportLibraryVersion"
