@@ -54,12 +54,21 @@ public class SimpleTextParser implements TextParser
 	}
 
 	public static String getValueFromLineStartingWith(String label, String[] lines){
-		for(String line : lines){
+		for(int i = 0; i < lines.length; i++){
+			String line = lines[i];
 			int index;
 			if((index = indexOfIgnoreCase(line, label)) != -1){
-				String tail = line.substring(index+label.length()).trim();
+				String tail = line.substring(index + label.length()).trim();
 				while(tail.startsWith(":"))
 					tail = tail.substring(1);
+				if(tail.trim().equals("")){
+					//assume it is the next line
+					if(i+1 < lines.length){
+						return lines[i+1].trim();
+					}
+					else
+						return "";
+				}
 				return tail.trim();
 			}
 		}

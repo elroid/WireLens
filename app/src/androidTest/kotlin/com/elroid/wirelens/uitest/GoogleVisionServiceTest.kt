@@ -29,6 +29,21 @@ class GoogleVisionServiceTest {
 
 	@Test
 	fun getVisionResponse_givenDroidconImage_returnsCorrectResponse() {
+		val bmp = getBitmapFromURL("http://elroid.com/wirelens/droidcon2.jpg");
+
+		val obs = googlVisionRemoteService.getVisionResponse(bmp)
+		val testObserver = TestObserver<GoogleVisionResponse>()
+		obs.subscribe(testObserver)
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 1)
+		val gvr = testObserver.values()[0]
+		val expected = TextParserResponse("droidconuk", "NOugatyNiceness")
+		val parser = SimpleTextParser()
+		assertEquals(expected, parser.parseResponse(gvr).blockingFirst())
+	}
+
+	/*@Test
+	fun getVisionResponse_givenDroidconImage_returnsCorrectResponse() {
 		val bmp = getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
 
 		val obs = googlVisionRemoteService.getVisionResponse(bmp)
@@ -40,7 +55,7 @@ class GoogleVisionServiceTest {
 		val expected = TextParserResponse("droidconuk", "WhatTheL50")
 		val parser = SimpleTextParser()
 		assertEquals(expected, parser.parseResponse(gvr).blockingFirst())
-	}
+	}*/
 
 	/*@Test
 	fun getVisionResponse_givenImage_returnsResponse(){

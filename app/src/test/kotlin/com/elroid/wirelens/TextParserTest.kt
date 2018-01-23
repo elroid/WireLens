@@ -43,13 +43,16 @@ class TextParserTest {
             |some:line1
             |thing: line2
             |Else    line3
+			|entirely:
+			|  line4
             """.trimMargin()
         )
 
         assertEquals("line1", SimpleTextParser.getValueFromLineStartingWith("some", gvr.lines))
         assertEquals("line2", SimpleTextParser.getValueFromLineStartingWith("thing", gvr.lines))
         assertEquals("line3", SimpleTextParser.getValueFromLineStartingWith("else", gvr.lines))
-        assertNull(SimpleTextParser.getValueFromLineStartingWith("altogether", gvr.lines))
+		assertEquals("line4", SimpleTextParser.getValueFromLineStartingWith("entirely", gvr.lines))
+		assertNull(SimpleTextParser.getValueFromLineStartingWith("altogether", gvr.lines))
     }
 
     @Test
@@ -114,5 +117,20 @@ class TextParserTest {
         Assert.assertEquals("WhatTheL50", tpr.password)
     }
 
+	@Test
+	fun parseResponse_givenDroidcon2Data_returnsCorrectCredentials() {
+		val gvr = GoogleVisionResponse(
+			"""
+			|droidcon
+			|LONDON
+			|wifi SSID: droidconuk
+			|Password:
+			|NOugatyNiceness
+            """.trimMargin()
+		)
+		val tpr: TextParserResponse = parser.parseResponse(gvr).blockingFirst()
+		Assert.assertEquals("droidconuk", tpr.ssid)
+		Assert.assertEquals("NOugatyNiceness", tpr.password)
+	}
 
 }
