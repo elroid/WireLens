@@ -7,10 +7,10 @@ import com.elroid.wirelens.uitest.framework.AcceptanceTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class MainActivityTest : AcceptanceTest<StartActivity>(StartActivity::class.java) {
+class MainActivityTest : AcceptanceTest<MainActivity>(MainActivity::class.java) {
 
   @Test
-  fun shouldDisplayAction() {
+  fun checkFabIsVisivle() {
     checkThat.viewIsVisible(R.id.fab)
   }
 }

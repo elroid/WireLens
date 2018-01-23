@@ -12,7 +12,8 @@ import org.json.JSONObject;
  */
 public class GoogleVisionResponse
 {
-	String text;
+	private String text;
+	private String[] lines;
 
 	public GoogleVisionResponse(String text){
 		this.text = text;
@@ -20,5 +21,12 @@ public class GoogleVisionResponse
 
 	public String getText(){
 		return text;
+	}
+
+	public String[] getLines(){
+		if(lines == null){
+			lines = text.split("\n");
+		}
+		return lines;
 	}
 }

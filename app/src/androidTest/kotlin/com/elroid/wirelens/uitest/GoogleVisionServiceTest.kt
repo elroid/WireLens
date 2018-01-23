@@ -3,13 +3,13 @@ package com.elroid.wirelens.uitest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient
 import com.elroid.wirelens.model.GoogleVisionResponse
+import com.elroid.wirelens.model.TextParserResponse
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
-import timber.log.Timber
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -25,47 +25,50 @@ import java.net.URL
  */
 class GoogleVisionServiceTest {
 
-    private val googlVisionRemoteService = GoogleVisionServiceClient(getTargetContext())
+	private val googlVisionRemoteService = GoogleVisionServiceClient(getTargetContext())
 
-    @Test
-    fun getVisionResponse_givenImage_returnsResponse(){
-        val bmp = getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
+	@Test
+	fun getVisionResponse_givenDroidconImage_returnsCorrectResponse() {
+		val bmp = getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
 
-        val obs = googlVisionRemoteService.getVisionResponse(bmp)
-        val testObserver = TestObserver<GoogleVisionResponse>()
-        obs.subscribe(testObserver)
-        testObserver.assertNoErrors()
-        assertEquals(testObserver.valueCount(), 1)
-        val gvr = testObserver.values()[0]
-        assertNotNull(gvr.text)
-        Timber.i("Response: %s", gvr.text)
-        /*
-        Response: droidcon
-                #droidconUK
-                LONDON 30-310CT2014
-                WIFI
-                SSID: droidconuk
-                Password:WhatTheL50
-                BROUGHT TO YOU BY
-                novodo
-                #droidconUK
-                droidcon
-                LONDON
-                N 30-31 0CT 2014
-         */
-    }
+		val obs = googlVisionRemoteService.getVisionResponse(bmp)
+		val testObserver = TestObserver<GoogleVisionResponse>()
+		obs.subscribe(testObserver)
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 1)
+		val gvr = testObserver.values()[0]
+		val expected = TextParserResponse("droidconuk", "WhatTheL50")
+		val parser = SimpleTextParser()
+		assertEquals(expected, parser.parseResponse(gvr).blockingFirst())
+	}
 
-    fun getBitmapFromURL(src: String): Bitmap? {
-        try {
-            val url = URL(src)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val input = connection.inputStream
-            return BitmapFactory.decodeStream(input)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }
+	/*@Test
+	fun getVisionResponse_givenImage_returnsResponse(){
+		val bmp = getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
+
+		val obs = googlVisionRemoteService.getVisionResponse(bmp)
+		val testObserver = TestObserver<GoogleVisionResponse>()
+		obs.subscribe(testObserver)
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 1)
+		val gvr = testObserver.values()[0]
+		assertNotNull(gvr.text)
+		Timber.i("Response: %s", gvr.text)
+	}*/
+
+
+
+	fun getBitmapFromURL(src: String): Bitmap? {
+		try {
+			val url = URL(src)
+			val connection = url.openConnection() as HttpURLConnection
+			connection.doInput = true
+			connection.connect()
+			val input = connection.inputStream
+			return BitmapFactory.decodeStream(input)
+		} catch (e: IOException) {
+			e.printStackTrace()
+			return null
+		}
+	}
 }
