@@ -2,6 +2,8 @@ package com.elroid.wirelens.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +11,7 @@ import android.support.annotation.WorkerThread;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -27,6 +30,8 @@ import timber.log.Timber;
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2017 Elroid Ltd. All rights reserved.
  */
+@SuppressWarnings({"WeakerAccess", "SameParameterValue", "unused"})
+//this is a util class, methods should be public and may only be used once or not at all
 public class FileUtils
 {
 	private static final String DEFAULT_FOLDER_NAME = "images";
@@ -48,7 +53,7 @@ public class FileUtils
 		return privateTempDir;
 	}
 
-	private static void writeToFile(InputStream in, File file) {
+	public static void writeToFile(InputStream in, File file) {
 		try {
 			OutputStream out = new FileOutputStream(file);
 			byte[] buf = new byte[1024];
@@ -61,6 +66,33 @@ public class FileUtils
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void writeToFile(Bitmap bitmap, File file) {
+		try {
+			OutputStream out = new FileOutputStream(file);
+			//ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			//byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+			/*byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}*/
+			out.close();
+			//in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Bitmap createBitmapFromFile(File imgFile) throws IOException{
+		Timber.d("createBitmapFromFile(imgFile:%s)", imgFile);
+		/*Uri photoUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".provider", imgFile);
+		return MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), photoUri);*/
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		return BitmapFactory.decodeFile(imgFile.getAbsolutePath(),bmOptions);
 	}
 
 	/**

@@ -14,6 +14,7 @@ import android.support.v4.content.FileProvider;
 import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
 import com.elroid.wirelens.model.GoogleVisionResponse;
+import com.elroid.wirelens.util.FileUtils;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -69,7 +70,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 		//return Single.just(new GoogleVisionResponse("Your message here"));
 		return Single.create(emitter -> {
 			try{
-				Bitmap bitmap = createBitmapFromFile(imgFile);
+				Bitmap bitmap = FileUtils.createBitmapFromFile(imgFile);
 				bitmap = scaleBitmapDown(bitmap, MAX_BITMAP_DIM);
 				GoogleVisionResponse gvr = callGoogleVision(bitmap);
 				emitter.onSuccess(gvr);
@@ -93,14 +94,6 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 				emitter.onError(e);
 			}
 		});
-	}
-
-	private Bitmap createBitmapFromFile(File imgFile) throws IOException{
-		Timber.d("createBitmapFromFile(imgFile:%s)", imgFile);
-		/*Uri photoUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".provider", imgFile);
-		return MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), photoUri);*/
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		return BitmapFactory.decodeFile(imgFile.getAbsolutePath(),bmOptions);
 	}
 
 	private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension){
@@ -164,11 +157,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 
 			// Add the image
 			Image base64EncodedImage = new Image();
-			// C
-			//
-			//
-			//
-			// onvert the bitmap to a JPEG
+			// Convert the bitmap to a JPEG
 			// Just in case it's a format that Android understands but Cloud Vision doesn't
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
