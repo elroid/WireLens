@@ -40,9 +40,7 @@ class GoogleVisionServiceTest {
 	private fun testVisionResponse(url:String, ssid:String, pwd:String) {
 		val bmp = getBitmapFromURL(url);
 
-		val obs = googlVisionRemoteService.getVisionResponse(bmp)
-		val testObserver = TestObserver<GoogleVisionResponse>()
-		obs.subscribe(testObserver)
+		val testObserver = googlVisionRemoteService.getVisionResponse(bmp).test()
 		testObserver.assertNoErrors()
 		assertEquals(testObserver.valueCount(), 1)
 		val gvr = testObserver.values()[0]
