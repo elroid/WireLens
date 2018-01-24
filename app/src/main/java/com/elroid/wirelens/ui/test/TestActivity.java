@@ -3,13 +3,9 @@ package com.elroid.wirelens.ui.test;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,7 +14,12 @@ import com.elroid.wirelens.domain.WifiDataManager;
 import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.ui.base.BaseActivity;
 import com.elroid.wirelens.ui.base.SchedulersFacade;
-import com.elroid.wirelens.util.Printer;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import javax.inject.Inject;
 
@@ -37,8 +38,6 @@ import timber.log.Timber;
  */
 public class TestActivity extends BaseActivity
 {
-	private static final int PERMISSIONS_REQUEST_CODE = 23;
-
 	public static Intent createIntent(Context ctx){
 		return new Intent(ctx, TestActivity.class);
 	}
@@ -57,65 +56,36 @@ public class TestActivity extends BaseActivity
 
 		narf = findViewById(R.id.narf);
 
-		/*List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
-		for(int i = 0; i < configuredNetworks.size(); i++){
-			WifiConfiguration wifiConfiguration = configuredNetworks.get(i);
-			Timber.d("config[%s]: %s", i, wifiConfiguration);
-			if(i != 0) r.append("\n");
-			r.append(wifiConfiguration.SSID);
-			//if (allowedKeyManagement.get(KeyMgmt.WPA_PSK)) {
-		}*/
-
-		/*WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-		int numberOfLevels = 5;
-		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);*/
-
-		/*List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
-		for(int i = 0; i < configuredNetworks.size(); i++){
-			WifiConfiguration wifiConfiguration = configuredNetworks.get(i);
-			Timber.d("config[%s]: %s", i, wifiConfiguration);
-			if(i != 0) r.append("\n");
-			r.append(wifiConfiguration.SSID);
-			//if (allowedKeyManagement.get(KeyMgmt.WPA_PSK)) {
-		}*/
-
-		//String permission = Manifest.permission.CHANGE_WIFI_STATE;
-		String permission = Manifest.permission.ACCESS_COARSE_LOCATION;
 		Button button = findViewById(R.id.button);
-		button.setOnClickListener(view -> {
-			if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-				&& ContextCompat.checkSelfPermission(TestActivity.this, permission) != PackageManager.PERMISSION_GRANTED){
-				Timber.d("requesting permission: %s", permission);
-				if(shouldShowRequestPermissionRationale(permission)){
-					Timber.d("needing rationale!!");
-				}
-				ActivityCompat.requestPermissions(TestActivity.this, new String[]{permission}, PERMISSIONS_REQUEST_CODE);
-				//After this point you wait for callback in onRequestPermissionsResult
-
-			}
-			else{
-				Timber.d("permission is already granted");
-				scan();
-				//do something, permission was previously granted; or legacy device
-			}
-		});
+		button.setOnClickListener(view -> scanWithPermissionsCheck());
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions,
-										   int[] grantResults){
-		Timber.d("onRequestPermissionsResult(requestCode:%s, permissions:%s, grantResults:%s)",
-			requestCode, Printer.print(permissions), Printer.print(grantResults));
-		if(requestCode == PERMISSIONS_REQUEST_CODE
-			&& grantResults[0] == PackageManager.PERMISSION_GRANTED){
-			Timber.d("permission granted: %s", permissions);
-			// Do something with granted permission
-			scan();
-		}
-		else{
-			Timber.w("why didn't this work?!");
-		}
+	private void scanWithPermissionsCheck(){
+
+		MultiplePermissionsListener dialogListener =
+			DialogOnAnyDeniedMultiplePermissionsListener.Builder
+				.withContext(this)
+				.withTitle("Wifi & course location permission")
+				.withMessage("Both change wifi state and coarse location permissions are needed to scan for wifi")
+				.withButtonText(android.R.string.ok)
+				.withIcon(R.mipmap.ic_launcher)
+				.build();
+
+		BaseMultiplePermissionsListener actionListener = new BaseMultiplePermissionsListener()
+		{
+			@Override public void onPermissionsChecked(MultiplePermissionsReport report){
+				if(report.areAllPermissionsGranted()){
+					scan();
+				}
+			}
+		};
+
+		Dexter.withActivity(this)
+			.withPermissions(
+				Manifest.permission.ACCESS_COARSE_LOCATION,
+				Manifest.permission.CHANGE_WIFI_STATE)
+			.withListener(new CompositeMultiplePermissionsListener(dialogListener, actionListener))
+			.check();
 	}
 
 
@@ -133,7 +103,8 @@ public class TestActivity extends BaseActivity
 				@Override
 				public void onNext(WifiNetwork wifiNetwork){
 					Timber.d("got wifi result: %s", wifiNetwork);
-					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(), wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+					// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
 					narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.getSsid(),
 						wifiNetwork.getSignalLevel()));
 				}
