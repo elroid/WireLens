@@ -1,4 +1,4 @@
-package com.elroid.wirelens.uitest.framework
+package com.elroid.wirelens.test.framework
 
 import android.app.Activity
 import android.support.annotation.IdRes

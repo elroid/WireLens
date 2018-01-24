@@ -1,9 +1,7 @@
-package com.elroid.wirelens.uitest
+package com.elroid.wirelens.test.ui
 
-import com.elroid.wirelens.R
-import com.elroid.wirelens.ui.main.MainActivity
 import com.elroid.wirelens.ui.start.StartActivity
-import com.elroid.wirelens.uitest.framework.AcceptanceTest
+import com.elroid.wirelens.test.framework.AcceptanceTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

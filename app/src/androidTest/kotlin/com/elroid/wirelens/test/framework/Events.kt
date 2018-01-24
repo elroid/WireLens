@@ -1,4 +1,4 @@
-package com.elroid.wirelens.uitest.framework
+package com.elroid.wirelens.test.framework
 
 import android.support.annotation.IdRes
 import android.support.test.espresso.Espresso.onView

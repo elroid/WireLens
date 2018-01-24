@@ -34,7 +34,7 @@ public class SimpleTextParser implements TextParser
 	}
 
 	private static final String[] ssidTokens = new String[]{"ssid", "wifi ssid"};
-	private static final String[] passwordTokens = new String[]{"Password"};
+	private static final String[] passwordTokens = new String[]{"Password", "wpa-psk"};
 
 	public Observable<String> getValue(GoogleVisionResponse gvr, String[] tokens){
 		return Observable.create(emitter -> {
