@@ -1,13 +1,16 @@
 package com.elroid.wirelens.injection;
 
 import android.content.Context;
+import android.net.wifi.WifiManager;
 
 import com.elroid.wirelens.App;
 import com.elroid.wirelens.data.local.GoogleVisionDataStore;
+import com.elroid.wirelens.data.local.wifi.WifiHelper;
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient;
 import com.elroid.wirelens.domain.DataManager;
 import com.elroid.wirelens.domain.GoogleVisionLocalRepository;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
+import com.elroid.wirelens.domain.WifiDataManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -71,4 +74,15 @@ public class AppModule
 		return builder.build();
 	}
 
+	@Provides
+	@Singleton
+	WifiManager provideWifiManager(Context ctx){
+		return (WifiManager)ctx.getSystemService(Context.WIFI_SERVICE);
+	}
+
+	@Provides
+	@Singleton
+	WifiDataManager provideWifiDataManager(WifiManager wifiManager, Context ctx){
+		return new WifiHelper(wifiManager, ctx);
+	}
 }
