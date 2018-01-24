@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -95,8 +96,11 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 	}
 
 	private Bitmap createBitmapFromFile(File imgFile) throws IOException{
-		Uri photoUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".provider", imgFile);
-		return MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), photoUri);
+		Timber.d("createBitmapFromFile(imgFile:%s)", imgFile);
+		/*Uri photoUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".provider", imgFile);
+		return MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), photoUri);*/
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		return BitmapFactory.decodeFile(imgFile.getAbsolutePath(),bmOptions);
 	}
 
 	private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension){
