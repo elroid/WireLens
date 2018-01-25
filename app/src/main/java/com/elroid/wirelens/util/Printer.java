@@ -252,10 +252,32 @@ public class Printer
 	}
 
 	public static String print(Object[] list) {
-		return print(list, 0);
+		if (list == null) return "null";
+		else if(list.length == 0) return "Empty";
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < list.length; i++) {
+			Object o = list[i];
+			if(i != 0) result.append(",");
+			if(o == null) result.append("null");
+			else result.append(o.toString());
+		}
+		return result.toString();
 	}
 
 	public static String print(Object[] list, int indent) {
+		if (list == null) return "null";
+		else if(list.length == 0) return "Empty";
+		String result = "Object["+list.length+"]:";
+		for (int i = 0; i < list.length; i++) {
+			Object o = list[i];
+			if (o != null) {
+				result += "\n" + pad(indent) + "[" + i + "]=";
+				result += print(o, indent + 1);
+			}
+		}
+		return result;
+	}
+	/*public static String print(Object[] list, int indent) {
 		String result = "\nArray(";
 		if (list == null) return result + "null)";
 		result += list.length + "):";
@@ -267,7 +289,7 @@ public class Printer
 			}
 		}
 		return result;
-	}
+	}*/
 
 	public static String printThread(){
 		StringBuilder result = new StringBuilder();

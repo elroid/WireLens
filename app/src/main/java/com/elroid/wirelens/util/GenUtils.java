@@ -12,6 +12,22 @@ import android.os.Looper;
  */
 public class GenUtils
 {
+	public static boolean isBlank(Object obj){
+		if(obj == null) return true;
+		else if(obj instanceof Object[]){
+			Object[] arr = (Object[])obj;
+			if(arr.length == 0) return true;
+			else{
+				for(Object o : arr){
+					if(!isBlank(o)) return false;
+				}
+				return true;
+			}
+		}
+		else
+			return obj.toString().trim().equals("");
+	}
+
 	public static boolean isUIThread() {
 		return Looper.getMainLooper().getThread() == Thread.currentThread();
 	}

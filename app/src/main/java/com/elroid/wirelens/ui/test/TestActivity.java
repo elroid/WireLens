@@ -3,6 +3,7 @@ package com.elroid.wirelens.ui.test;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,8 @@ import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -57,7 +60,53 @@ public class TestActivity extends BaseActivity
 		narf = findViewById(R.id.narf);
 
 		Button button = findViewById(R.id.button);
-		button.setOnClickListener(view -> scanWithPermissionsCheck());
+		//button.setOnClickListener(view -> scanWithPermissionsCheck());
+		button.setOnClickListener(view -> connect());
+	}
+
+	private String printConfiguredNetworks(){
+		List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
+		StringBuilder r = new StringBuilder();
+		for(int i = 0; i < configs.size(); i++){
+			WifiConfiguration wifiConfiguration = configs.get(i);
+			if(i != 0) r.append("\n");
+			//r.append(String.format("'%s'", wifiConfiguration.SSID));
+			r.append(wifiConfiguration.toString());
+		}
+		return r.toString();
+	}
+
+	private void connect(){
+		Timber.d("(before) configured networks: %s", printConfiguredNetworks());
+		/*List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
+		for(int i = 0; i < configs.size(); i++){
+			WifiConfiguration wifiConfiguration = configs.get(i);
+			if(wifiConfiguration.SSID.contains("It's")){
+				Timber.i("removing %s...", wifiConfiguration.SSID);
+				try{
+					wifiManager.removeNetwork(wifiConfiguration.networkId);
+				}
+				catch(Throwable e){
+					Timber.w(e, "Unable to remove network %s", wifiConfiguration.SSID);
+				}
+			}
+		}
+		Timber.d("(after) configured networks: %s", printConfiguredNetworks());*/
+
+		wifiDataManager
+//			.connect("It's a trap! ", "Calamari")//correct
+//			.connect("It's a trap! ", "Calamari2")//wrong password
+//			.connect("It's a trope!", "Calamari")//wrong SSID
+//			.connect("It's a trap!", "Calamari")//space error
+			.connect("Prinky", "") //no auth
+			.subscribeOn(schedulers.io())
+			.observeOn(schedulers.ui())
+			.subscribe(() -> {
+				Timber.i("connect is complete");
+			}, e -> {
+				Timber.e(e, "connect error");
+				toast("Error: " + e.getMessage());
+			});
 	}
 
 	private void scanWithPermissionsCheck(){
@@ -73,7 +122,8 @@ public class TestActivity extends BaseActivity
 
 		BaseMultiplePermissionsListener actionListener = new BaseMultiplePermissionsListener()
 		{
-			@Override public void onPermissionsChecked(MultiplePermissionsReport report){
+			@Override
+			public void onPermissionsChecked(MultiplePermissionsReport report){
 				if(report.areAllPermissionsGranted()){
 					scan();
 				}
@@ -90,6 +140,7 @@ public class TestActivity extends BaseActivity
 
 
 	private void scan(){
+		narf.setText("");
 		wifiDataManager.scan()
 			.subscribeOn(schedulers.io())
 			.observeOn(schedulers.ui())
@@ -117,6 +168,7 @@ public class TestActivity extends BaseActivity
 				@Override
 				public void onComplete(){
 					Timber.d("scan complete");
+
 				}
 			});
 	}

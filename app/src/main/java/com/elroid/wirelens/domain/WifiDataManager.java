@@ -16,5 +16,5 @@ import io.reactivex.Observable;
 public interface WifiDataManager
 {
 	Observable<WifiNetwork> scan();
-	Completable connect(WifiNetwork network, String password);
+	Completable connect(String ssid, String password);
 }
