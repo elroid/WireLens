@@ -2,6 +2,7 @@ package com.elroid.wirelens;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.elroid.wirelens.injection.DaggerAppComponent;
 
@@ -43,5 +44,12 @@ public class App extends Application implements HasActivityInjector
 	@Override
 	public AndroidInjector<Activity> activityInjector(){
 		return dispatchingAndroidInjector;
+	}
+
+	@Override protected void attachBaseContext(Context base){
+		super.attachBaseContext(base);
+		if(BuildConfig.DEBUG){
+			android.support.multidex.MultiDex.install(this);
+		}
 	}
 }

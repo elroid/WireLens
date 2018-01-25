@@ -31,6 +31,8 @@ class GoogleVisionServiceTest {
 	@Test
 	fun getVisionResponse_givenImage_returnsCorrectResponse() {
 
+		testVisionResponse("http://elroid.com/wirelens/handwritten.jpg", "", "");//"""sagemcom", "cdfe4c7ffe")
+		testVisionResponse("http://elroid.com/wirelens/passwordPrinted.jpg", "", "Hglguest")
 		testVisionResponse("http://elroid.com/wirelens/modem.jpg", "ZyXEL11633", "84DCF5174BC6B377FFDC")
 //		testVisionResponse("http://elroid.com/wirelens/guest.jpg", "65twenty_guest", "guest7ad")
 //		testVisionResponse("http://elroid.com/wirelens/droidcon2.jpg", "droidconuk", "NOugatyNiceness")

@@ -37,6 +37,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix "-Debug"
             debuggable true
+            multiDexEnabled true
         }
         release {
             resValue "string", "app_name", "WireLens"
@@ -75,6 +76,8 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.karumi:dexter:4.2.0'
+
+    debugImplementation 'com.android.support:multidex:1.0.2'
 
     //google vision
     implementation 'com.google.api-client:google-api-client-android:1.20.0' exclude module: 'httpclient'

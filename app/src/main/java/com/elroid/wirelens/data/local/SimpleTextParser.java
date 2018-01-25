@@ -19,26 +19,24 @@ public class SimpleTextParser implements TextParser
 {
 	@Override
 	public Observable<TextParserResponse> parseResponse(GoogleVisionResponse gvr){
-		return parseBoth(gvr);
-	}
-
-	public Observable<TextParserResponse> parseBoth(GoogleVisionResponse gvr){
-		return Observable.combineLatest(getSSID(gvr), getPassword(gvr), (ssid, password) ->
-			new TextParserResponse(gvr.getText(), ssid, password));
+		return Observable.combineLatest(
+			getSSID(gvr).defaultIfEmpty(""),
+			getPassword(gvr).defaultIfEmpty(""),
+			(ssid, password) -> new TextParserResponse(gvr.getText(), ssid, password));
 	}
 
 	public Observable<String> getSSID(GoogleVisionResponse gvr){
 		return getValue(gvr, ssidTokens);
 	}
 
-	public Observable<String> getPassword(GoogleVisionResponse gvr){
+	private Observable<String> getPassword(GoogleVisionResponse gvr){
 		return getValue(gvr, passwordTokens);
 	}
 
 	private static final String[] ssidTokens = new String[]{"ssid", "wifi ssid"};
 	private static final String[] passwordTokens = new String[]{"Password", "wpa-psk"};
 
-	public Observable<String> getValue(GoogleVisionResponse gvr, String[] tokens){
+	private Observable<String> getValue(GoogleVisionResponse gvr, String[] tokens){
 		return Observable.create(emitter -> {
 			try{
 				for(String token : tokens){

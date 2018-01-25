@@ -192,19 +192,20 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 	}
 
 	private GoogleVisionResponse convertResponseToString(BatchAnnotateImagesResponse response){
-		try{
+		/*try{
 			Timber.v("Response: " + response.toPrettyString());
 		}
 		catch(Exception e){
 			e.printStackTrace();
-		}
+		}*/
 
 		AnnotateImageResponse aResponse = response.getResponses().get(0);
+		Timber.d("raw response: %s", aResponse);
 		TextAnnotation text = aResponse.getFullTextAnnotation();
-		if(text != null)
-			return new GoogleVisionResponse(text.getText());
-		else
-			return new GoogleVisionResponse("");
+
+		String result = text == null ? "" : text.getText();
+		Timber.d("returning google image result: '%s'", result);
+		return new GoogleVisionResponse(result);
 	}
 
 	/**

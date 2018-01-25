@@ -43,7 +43,7 @@ class CustomTestRunner:AndroidJUnitRunner() {
 
 			this@CustomTestRunner.disableAnimations(app)
 
-			val name = CustomTestRunner::class.java!!.getSimpleName()
+			val name = CustomTestRunner::class.java.getSimpleName()
 			unlockScreen(app, name)
 			keepSceenAwake(app, name)
 		}
