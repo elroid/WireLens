@@ -43,4 +43,17 @@ public class TextUtils
 	public static boolean containsIgnoreCase(String str, String tok){
 		return indexOfIgnoreCase(str, tok) > 0;
 	}
+
+	public static boolean isHex(String str){
+		if(str == null) return false;
+		for(int i=0; i<str.length(); i++){
+			char c = str.charAt(i);
+
+			if(!Character.isDigit(c)
+				&& (c < 'a' || c > 'g')
+				&& (c < 'A' || c > 'G'))
+				return false;
+		}
+		return true;
+	}
 }

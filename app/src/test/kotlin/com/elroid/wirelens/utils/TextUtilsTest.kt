@@ -2,7 +2,7 @@ package com.elroid.wirelens.utils
 
 import com.elroid.wirelens.model.GoogleVisionResponse
 import com.elroid.wirelens.util.TextUtils
-import org.junit.Assert.assertNull
+import org.junit.Assert.*
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -37,5 +37,17 @@ class TextUtilsTest {
     }
 
 
-
+	@Test
+	fun isHex_givenVariousData_respondsAppropriately(){
+		assertTrue(TextUtils.isHex("84DCF5174BC6B377FFDC"))
+		assertFalse(TextUtils.isHex("84DCF5174BC6B377FFDJ"))
+		assertTrue(TextUtils.isHex("0"))
+		assertFalse(TextUtils.isHex("z"))
+		assertTrue(TextUtils.isHex("123abc"))
+		assertFalse(TextUtils.isHex("123 abc"))
+		assertTrue(TextUtils.isHex("01234567890abcdefG"))
+		assertFalse(TextUtils.isHex("01234567890abcdefGH"))
+		assertTrue(TextUtils.isHex(""))
+		assertFalse(TextUtils.isHex(null))
+	}
 }
