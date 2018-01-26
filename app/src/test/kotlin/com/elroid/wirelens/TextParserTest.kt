@@ -3,8 +3,6 @@ package com.elroid.wirelens
 import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.model.GoogleVisionResponse
 import com.elroid.wirelens.model.TextParserResponse
-import io.reactivex.observers.TestObserver
-import org.junit.Assert
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -22,6 +20,8 @@ class TextParserTest {
 
 	@Test
 	fun getLines_givenNormalText_returnsLines() {
+
+		//given
 		val gvr = GoogleVisionResponse(
 			"""
             |line1
@@ -29,14 +29,21 @@ class TextParserTest {
             |line3
             """.trimMargin()
 		)
+
+		//when
+		val actual = gvr.lines
+
+		//then
 		val expected = arrayOf("line1", "line2", "line3")
-		assertArrayEquals(expected, gvr.lines);
+		assertArrayEquals(expected, actual);
 	}
 
 	val parser = SimpleTextParser()
 
 	@Test
 	fun getSSID_givenTextWithOneSSID_returnsOneSSID() {
+
+		//given
 		val gvr = GoogleVisionResponse(
 			"""
             |some:line1
@@ -45,9 +52,10 @@ class TextParserTest {
             """.trimMargin()
 		)
 
-		val obs = parser.getSSID(gvr)
-		val testObserver = TestObserver<String>()
-		obs.subscribe(testObserver)
+		//when
+		val testObserver = parser.getSSID(gvr).test()
+
+		//then
 		testObserver.assertNoErrors()
 		assertEquals(testObserver.valueCount(), 1)
 		val result = testObserver.values().get(0)
@@ -56,6 +64,8 @@ class TextParserTest {
 
 	@Test
 	fun getSSID_givenTextWithTwoSSIDs_returnsTwoSSIDs() {
+
+		//given
 		val gvr = GoogleVisionResponse(
 			"""
             |some:line1
@@ -64,18 +74,20 @@ class TextParserTest {
             """.trimMargin()
 		)
 
-		val obs = parser.getSSID(gvr)
-		val testObserver = TestObserver<String>()
-		obs.subscribe(testObserver)
+		//when
+		val testObserver = parser.getSSID(gvr).test()
+
+		//then
 		testObserver.assertNoErrors()
 		assertEquals(testObserver.valueCount(), 2)
-
 		assertEquals("line2", testObserver.values().get(0))
 		assertEquals("line3", testObserver.values().get(1))
 	}
 
 	@Test
 	fun parseResponse_givenDroidconData_returnsCorrectCredentials() {
+
+		//given
 		val gvr = GoogleVisionResponse(
 			"""
             |droidcon
@@ -92,13 +104,19 @@ class TextParserTest {
             |N 30-31 0CT 2014
             """.trimMargin()
 		)
+
+		//when
 		val tpr: TextParserResponse = parser.parseResponse(gvr).blockingFirst()
-		Assert.assertEquals("droidconuk", tpr.ssid)
-		Assert.assertEquals("WhatTheL50", tpr.password)
+
+		//then
+		assertEquals("droidconuk", tpr.ssid)
+		assertEquals("WhatTheL50", tpr.password)
 	}
 
 	@Test
 	fun parseResponse_givenDroidcon2Data_returnsCorrectCredentials() {
+
+		//given
 		val gvr = GoogleVisionResponse(
 			"""
 			|droidcon
@@ -108,9 +126,13 @@ class TextParserTest {
 			|NOugatyNiceness
             """.trimMargin()
 		)
+
+		//when
 		val tpr: TextParserResponse = parser.parseResponse(gvr).blockingFirst()
-		Assert.assertEquals("droidconuk", tpr.ssid)
-		Assert.assertEquals("NOugatyNiceness", tpr.password)
+
+		//then
+		assertEquals("droidconuk", tpr.ssid)
+		assertEquals("NOugatyNiceness", tpr.password)
 	}
 
 }
