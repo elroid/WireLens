@@ -1,5 +1,7 @@
 package com.elroid.wirelens.util;
 
+import java.util.regex.Pattern;
+
 /**
  * Class: com.elroid.wirelens.util.TextUtils
  * Project: WireLens
@@ -9,7 +11,7 @@ package com.elroid.wirelens.util;
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
 @SuppressWarnings({"WeakerAccess", "SameParameterValue", "unused"})
-//this is a util class, methods should be public and may only be used once or not at all
+//this is a util class, methods should be public and may not yet be used
 public class TextUtils
 {
 	public static String getValueFromLineStartingWith(String label, String[] lines){
@@ -22,8 +24,8 @@ public class TextUtils
 					tail = tail.substring(1);
 				if(tail.trim().equals("")){
 					//assume it is the next line
-					if(i+1 < lines.length){
-						return lines[i+1].trim();
+					if(i + 1 < lines.length){
+						return lines[i + 1].trim();
 					}
 					else
 						return "";
@@ -44,16 +46,13 @@ public class TextUtils
 		return indexOfIgnoreCase(str, tok) > 0;
 	}
 
-	public static boolean isHex(String str){
-		if(str == null) return false;
-		for(int i=0; i<str.length(); i++){
-			char c = str.charAt(i);
+	public static boolean equalsIgnoreCase(String str, String tok){
+		return str.toUpperCase().equals(tok.toUpperCase());
+	}
 
-			if(!Character.isDigit(c)
-				&& (c < 'a' || c > 'g')
-				&& (c < 'A' || c > 'G'))
-				return false;
-		}
-		return true;
+	private static final Pattern HEX_DIGITS = Pattern.compile("[0-9A-Fa-f]+");
+
+	public static boolean isHex(String str){
+		return str != null && HEX_DIGITS.matcher(str).matches();
 	}
 }
