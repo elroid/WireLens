@@ -2,8 +2,11 @@ package com.elroid.wirelens.domain;
 
 import com.elroid.wirelens.model.WifiNetwork;
 
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Class: com.elroid.wirelens.domain.WifiDataManager
@@ -15,6 +18,6 @@ import io.reactivex.Observable;
  */
 public interface WifiDataManager
 {
-	Observable<WifiNetwork> scan();
+	Single<List<WifiNetwork>> scan();
 	Completable connect(String ssid, String password);
 }

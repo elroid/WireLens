@@ -1,5 +1,7 @@
 package com.elroid.wirelens.model;
 
+import com.elroid.wirelens.util.GenUtils;
+
 /**
  * Class: com.elroid.wirelens.model.TextParserResponse
  * Project: WireLens
@@ -47,6 +49,18 @@ public class TextParserResponse
 
 	public void setPassword(String password){
 		this.password = password;
+	}
+
+	public boolean hasSsid(){
+		return !GenUtils.isBlank(ssid);
+	}
+
+	public boolean hasPassword(){
+		return !GenUtils.isBlank(password);
+	}
+
+	public boolean hasBoth(){
+		return hasSsid() && hasPassword();
 	}
 
 	@Override

@@ -27,6 +27,11 @@ public class WifiNetwork
 		this.signalLevel = scanResult.level;
 	}
 
+	public WifiNetwork(String ssid, int signalLevel){
+		this.ssid = ssid;
+		this.signalLevel = signalLevel;
+	}
+
 	public WifiNetwork(String ssid, String capabilities, int signalLevel){
 		this.ssid = ssid;
 		this.capabilities = capabilities;

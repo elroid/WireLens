@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import timber.log.Timber;
 
 import static android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION;
@@ -46,10 +47,10 @@ public class WifiHelper implements WifiDataManager
 	}
 
 	@Override
-	public Observable<WifiNetwork> scan(){
+	public Single<List<WifiNetwork>> scan(){
 		boolean started = wifiManager.startScan();
 		Timber.d("started scan: %s", started);
-		return Observable.create(emitter -> {
+		return Single.create(emitter -> {
 			BroadcastReceiver receiver = new BroadcastReceiver()
 			{
 				@Override
@@ -74,11 +75,8 @@ public class WifiHelper implements WifiDataManager
 					Collections.sort(result, (o1, o2)
 						-> Integer.valueOf(o2.getSignalLevel()).compareTo(o1.getSignalLevel()));
 					Timber.i("final results are: %s", result);
-					for(WifiNetwork wifiNetwork : result){
-						emitter.onNext(wifiNetwork);
-					}
 					ctx.unregisterReceiver(this);
-					emitter.onComplete();
+					emitter.onSuccess(result);
 				}
 			};
 			ctx.registerReceiver(receiver, new IntentFilter(SCAN_RESULTS_AVAILABLE_ACTION));
