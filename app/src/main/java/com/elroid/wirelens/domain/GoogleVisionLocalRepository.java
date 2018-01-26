@@ -1,7 +1,7 @@
 package com.elroid.wirelens.domain;
 
+import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.GoogleVisionResponse;
-import java.io.File;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
@@ -16,6 +16,7 @@ import io.reactivex.Single;
  */
 public interface GoogleVisionLocalRepository
 {
-	Completable saveVisionResponse(File imgFile, GoogleVisionResponse response);
-	Single<GoogleVisionResponse> getVisionResponse(File imgFile);
+	Completable saveVisionResponse(CredentialsImage image, GoogleVisionResponse response);
+
+	Single<GoogleVisionResponse> getVisionResponse(CredentialsImage image);
 }

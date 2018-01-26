@@ -5,9 +5,8 @@ import android.graphics.BitmapFactory
 import android.support.test.InstrumentationRegistry.getTargetContext
 import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient
-import com.elroid.wirelens.model.GoogleVisionResponse
+import com.elroid.wirelens.model.CredentialsImage
 import com.elroid.wirelens.model.TextParserResponse
-import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import timber.log.Timber
@@ -39,10 +38,11 @@ class GoogleVisionServiceTest {
 //		testVisionResponse("http://elroid.com/wirelens/droidcon.jpg", "droidconuk", "WhatTheL50")
 	}
 
-	private fun testVisionResponse(url:String, ssid:String, pwd:String) {
+	private fun testVisionResponse(url: String, ssid: String, pwd: String) {
 		val bmp = getBitmapFromURL(url);
+		val credImg = CredentialsImage(bmp)
 
-		val testObserver = googlVisionRemoteService.getVisionResponse(bmp).test()
+		val testObserver = googlVisionRemoteService.getVisionResponse(credImg).test()
 		testObserver.assertNoErrors()
 		assertEquals(testObserver.valueCount(), 1)
 		val gvr = testObserver.values()[0]

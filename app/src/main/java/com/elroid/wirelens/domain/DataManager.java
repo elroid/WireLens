@@ -1,5 +1,8 @@
 package com.elroid.wirelens.domain;
 
+import android.media.Image;
+
+import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.GoogleVisionResponse;
 
 import java.io.File;
@@ -30,16 +33,16 @@ public class DataManager
 		this.remoteVisionRepository = remoteVisionRepository;
 	}
 
-	public Single<GoogleVisionResponse> extractText(File imgFile){
+	public Single<GoogleVisionResponse> extractText(CredentialsImage image){
 		//return Single.error(new Exception("Not yet implemented"));
-		return retrieveRemoteGoogleVisionResponse(imgFile);
+		return retrieveRemoteGoogleVisionResponse(image);
 	}
 
-	public Single<GoogleVisionResponse> retrieveRemoteGoogleVisionResponse(File imgFile){
-		return remoteVisionRepository.getVisionResponse(imgFile);
+	public Single<GoogleVisionResponse> retrieveRemoteGoogleVisionResponse(CredentialsImage image){
+		return remoteVisionRepository.getVisionResponse(image);
 	}
 
-	public Single<GoogleVisionResponse> retrieveLocalGoogleVisionResponse(File imgFile){
-		return localVisionRespository.getVisionResponse(imgFile);
+	public Single<GoogleVisionResponse> retrieveLocalGoogleVisionResponse(CredentialsImage image){
+		return localVisionRespository.getVisionResponse(image);
 	}
 }

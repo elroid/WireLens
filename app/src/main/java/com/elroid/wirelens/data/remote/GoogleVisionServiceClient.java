@@ -5,16 +5,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 
 import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
+import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.GoogleVisionResponse;
-import com.elroid.wirelens.util.FileUtils;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -27,12 +23,10 @@ import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.Feature;
-import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.TextAnnotation;
 import com.google.common.io.BaseEncoding;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,27 +60,14 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 	}
 
 
-	@Override public Single<GoogleVisionResponse> getVisionResponse(File imgFile){
+	@Override
+	public Single<GoogleVisionResponse> getVisionResponse(CredentialsImage image){
 		//return Single.just(new GoogleVisionResponse("Your message here"));
 		return Single.create(emitter -> {
 			try{
-				Bitmap bitmap = FileUtils.createBitmapFromFile(imgFile);
+				Bitmap bitmap = image.getBitmap();
 				bitmap = scaleBitmapDown(bitmap, MAX_BITMAP_DIM);
 				GoogleVisionResponse gvr = callGoogleVision(bitmap);
-				emitter.onSuccess(gvr);
-			}
-			catch(Exception e){
-				Timber.w(e, "Google vision error");
-				emitter.onError(e);
-			}
-		});
-	}
-
-	@Override public Single<GoogleVisionResponse> getVisionResponse(Bitmap bitmap){
-		return Single.create(emitter -> {
-			try{
-				Bitmap resized = scaleBitmapDown(bitmap, MAX_BITMAP_DIM);
-				GoogleVisionResponse gvr = callGoogleVision(resized);
 				emitter.onSuccess(gvr);
 			}
 			catch(Exception e){
@@ -156,7 +137,8 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 			AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
 
 			// Add the image
-			Image base64EncodedImage = new Image();
+			com.google.api.services.vision.v1.model.Image base64EncodedImage
+				= new com.google.api.services.vision.v1.model.Image();
 			// Convert the bitmap to a JPEG
 			// Just in case it's a format that Android understands but Cloud Vision doesn't
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.elroid.wirelens.R;
 import com.elroid.wirelens.domain.DataManager;
+import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.ui.base.BaseActivity;
 import com.elroid.wirelens.ui.base.SchedulersFacade;
 import com.elroid.wirelens.util.FileUtils;
@@ -57,7 +58,7 @@ public class ImporterActivity extends BaseActivity
 					Timber.d("Got file: %s", file);
 
 					hello.setText("Analysing...");
-					dataManager.extractText(file)
+					dataManager.extractText(new CredentialsImage(file))
 						.subscribeOn(schedulers.io())
 						.observeOn(schedulers.ui())
 						.subscribe(myData -> {

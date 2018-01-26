@@ -1,6 +1,7 @@
 package com.elroid.wirelens.data.local;
 
 import com.elroid.wirelens.domain.GoogleVisionLocalRepository;
+import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.GoogleVisionResponse;
 
 import java.io.File;
@@ -18,11 +19,13 @@ import io.reactivex.Single;
  */
 public class GoogleVisionDataStore implements GoogleVisionLocalRepository
 {
-	@Override public Completable saveVisionResponse(File imgFile, GoogleVisionResponse response){
+	@Override
+	public Completable saveVisionResponse(CredentialsImage imgFile, GoogleVisionResponse response){
 		return Completable.complete();//todo
 	}
 
-	@Override public Single<GoogleVisionResponse> getVisionResponse(File imgFile){
+	@Override
+	public Single<GoogleVisionResponse> getVisionResponse(CredentialsImage imgFile){
 		//return Single.just(new GoogleVisionResponse("Your message here"));//todo
 		return Single.error(new Exception("Data not cached"));
 	}
