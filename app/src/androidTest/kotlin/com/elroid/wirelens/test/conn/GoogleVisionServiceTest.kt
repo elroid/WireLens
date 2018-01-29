@@ -7,6 +7,7 @@ import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient
 import com.elroid.wirelens.model.CredentialsImage
 import com.elroid.wirelens.model.TextParserResponse
+import com.elroid.wirelens.util.FileUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import timber.log.Timber
@@ -39,7 +40,7 @@ class GoogleVisionServiceTest {
 	}
 
 	private fun testVisionResponse(url: String, ssid: String, pwd: String) {
-		val bmp = getBitmapFromURL(url);
+		val bmp = FileUtils.getBitmapFromURL(url);
 		val credImg = CredentialsImage(bmp)
 
 		val testObserver = googlVisionRemoteService.getVisionResponse(credImg).test()
@@ -68,18 +69,4 @@ class GoogleVisionServiceTest {
 		Timber.i("Response: %s", gvr.text)
 	}*/
 
-
-	fun getBitmapFromURL(src: String): Bitmap? {
-		try {
-			val url = URL(src)
-			val connection = url.openConnection() as HttpURLConnection
-			connection.doInput = true
-			connection.connect()
-			val input = connection.inputStream
-			return BitmapFactory.decodeStream(input)
-		} catch (e: IOException) {
-			e.printStackTrace()
-			return null
-		}
-	}
 }

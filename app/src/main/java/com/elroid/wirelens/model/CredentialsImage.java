@@ -1,5 +1,6 @@
 package com.elroid.wirelens.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.elroid.wirelens.util.FileUtils;
@@ -34,8 +35,9 @@ public class CredentialsImage
 		return bitmap;
 	}
 
-	public File getFile(){
-		if(imageFile == null) throw new RuntimeException("Have not yet written bitmap->file conversion");
+	public File getFile(Context ctx) throws IOException{
+		if(imageFile == null) //throw new RuntimeException("Have not yet written bitmap->file conversion");
+			imageFile = FileUtils.createFile(ctx, bitmap);
 		return imageFile;
 	}
 }

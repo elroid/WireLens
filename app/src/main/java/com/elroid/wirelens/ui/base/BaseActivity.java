@@ -1,5 +1,6 @@
 package com.elroid.wirelens.ui.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -21,5 +22,9 @@ public abstract class BaseActivity extends AppCompatActivity
 	protected void toast(String str){
 		Timber.d("toast: %s", str);
 		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+	}
+
+	protected Context getCtx(){
+		return this;
 	}
 }

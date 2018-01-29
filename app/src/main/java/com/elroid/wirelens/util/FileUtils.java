@@ -7,17 +7,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.webkit.MimeTypeMap;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.UUID;
 
 import timber.log.Timber;
@@ -47,29 +45,30 @@ public class FileUtils
 		return photoFile;
 	}
 
-	private static File tempImageDirectory(@NonNull Context context) {
+	private static File tempImageDirectory(@NonNull Context context){
 		File privateTempDir = new File(context.getCacheDir(), DEFAULT_FOLDER_NAME);
-		if (!privateTempDir.exists()) privateTempDir.mkdirs();
+		if(!privateTempDir.exists()) privateTempDir.mkdirs();
 		return privateTempDir;
 	}
 
-	public static void writeToFile(InputStream in, File file) {
-		try {
+	public static void writeToFile(InputStream in, File file){
+		try{
 			OutputStream out = new FileOutputStream(file);
 			byte[] buf = new byte[1024];
 			int len;
-			while ((len = in.read(buf)) > 0) {
+			while((len = in.read(buf)) > 0){
 				out.write(buf, 0, len);
 			}
 			out.close();
 			in.close();
-		} catch (Exception e) {
+		}
+		catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 
-	public static void writeToFile(Bitmap bitmap, File file) {
-		try {
+	public static void writeToFile(Bitmap bitmap, File file){
+		try{
 			OutputStream out = new FileOutputStream(file);
 			//ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
@@ -82,7 +81,8 @@ public class FileUtils
 			}*/
 			out.close();
 			//in.close();
-		} catch (Exception e) {
+		}
+		catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -92,22 +92,49 @@ public class FileUtils
 		/*Uri photoUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".provider", imgFile);
 		return MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), photoUri);*/
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		return BitmapFactory.decodeFile(imgFile.getAbsolutePath(),bmOptions);
+		return BitmapFactory.decodeFile(imgFile.getAbsolutePath(), bmOptions);
 	}
+
+	public static Bitmap getBitmapFromURL(String urlStr) throws IOException{
+		try{
+			URL url = new URL(urlStr);
+			URLConnection connection = url.openConnection();
+			connection.setDoInput(true);
+			connection.connect();
+			InputStream input = connection.getInputStream();
+			return BitmapFactory.decodeStream(input);
+		}
+		catch(IOException e){
+			Timber.w(e, "Error getting bitamp from: %s", urlStr);
+			return null;
+		}
+	}
+
+	public static File createFile(Context ctx, Bitmap bitmap) throws IOException{
+		File directory = tempImageDirectory(ctx);
+		File photoFile = new File(directory, UUID.randomUUID().toString() + ".jpg");
+		if(!photoFile.createNewFile())
+			throw new IOException("Unable to create file: " + photoFile);
+		OutputStream out = new FileOutputStream(photoFile);
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+		return photoFile;
+	}
+
 
 	/**
 	 * To find out the extension of required object in given uri
 	 * Solution by http://stackoverflow.com/a/36514823/1171484
 	 */
-	public static String getExtension(@NonNull Context context, @NonNull Uri uri) {
+	public static String getExtension(@NonNull Context context, @NonNull Uri uri){
 		String extension;
 
 		//Check uri format to avoid null
-		if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+		if(uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)){
 			//If scheme is a content
 			final MimeTypeMap mime = MimeTypeMap.getSingleton();
 			extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
-		} else {
+		}
+		else{
 			//If scheme is a File
 			//This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
 			extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
