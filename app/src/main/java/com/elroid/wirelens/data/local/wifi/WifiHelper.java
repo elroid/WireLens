@@ -14,11 +14,9 @@ import android.text.format.Formatter;
 import com.elroid.wirelens.domain.WifiDataManager;
 import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.util.GenUtils;
-import com.elroid.wirelens.util.TextUtils;
 import com.elroid.wirelens.util.WifiUtils;
 
-import java.io.IOException;
-import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +25,10 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 import static android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION;
@@ -119,8 +117,11 @@ public class WifiHelper implements WifiDataManager
 				}
 
 				if(netId == -1){
+					WifiConfiguration config;
+					//todo check if it's already saved?
+
 					// Create config
-					WifiConfiguration config = new WifiConfiguration();
+					config = new WifiConfiguration();
 					// Must be in double quotes to tell system this is an ASCII SSID and passphrase.
 					config.SSID = String.format("\"%s\"", ssid);
 					if(GenUtils.isBlank(password))
@@ -182,7 +183,34 @@ public class WifiHelper implements WifiDataManager
 				}
 				Timber.i("got ip: %s", ip);
 
-				checkConn().subscribe(emitter::onComplete, emitter::onError);
+				int NUM_ATTEMPTS = 4;
+				for(int i = 0; i < NUM_ATTEMPTS; i++){
+					boolean lastTime = i == NUM_ATTEMPTS - 1;
+					Timber.d("checking connection...");
+					try{
+						checkConn();
+						break;
+					}
+					catch(UnknownHostException e){
+						if(lastTime){
+							throw e;
+						}
+						else{
+							Timber.w("Unable to connect (unknown host)");
+							Thread.sleep(500);
+						}
+					}
+					catch(Exception e){
+						if(lastTime){
+							throw e;
+						}
+						else{
+							Timber.w("Unable to connect: %s", e.getMessage());
+							Thread.sleep(500);
+						}
+					}
+				}
+				emitter.onComplete();
 			}
 			catch(Exception e){
 				Timber.e(e, "Error connecting to network");
@@ -207,6 +235,7 @@ public class WifiHelper implements WifiDataManager
 		return r.toString();
 	}
 
+	@SuppressWarnings("deprecation") //todo we should fix this at some point...
 	private String getCurrentIp(){
 		try{
 			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -222,7 +251,13 @@ public class WifiHelper implements WifiDataManager
 	private String getCurrentSsid(){
 		try{
 			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			return wifiInfo.getSSID();
+			String result = wifiInfo.getSSID();
+			if(result.equals("0x")){
+				Timber.d("got 0x as ssid, treating as null...");
+				return null;
+			}
+			else
+				return result;
 		}
 		catch(Exception e){
 			Timber.w(e, "Error getting current ssid");
@@ -230,17 +265,22 @@ public class WifiHelper implements WifiDataManager
 		}
 	}
 
-	private Completable checkConn(){
+	private void checkConn() throws Exception{
+		String url = "http://elroid.com/wirelens/test.php";
+		OkHttpClient client = new OkHttpClient();
+
+		Request request = new Request.Builder().url(url).build();
+
+		Response response = client.newCall(request).execute();
+		ResponseBody body = response.body();
+		if(body == null) throw new Exception("body is empty");
+		String result = body.string();
+		Timber.i("got result from test page: %s", result);
+	}
+	/*private Completable checkConnCompletable(){
 		return Completable.create(emitter -> {
 			try{
-				String url = "http://elroid.com/wirelens/test.php";
-				OkHttpClient client = new OkHttpClient();
-
-				Request request = new Request.Builder().url(url).build();
-
-				Response response = client.newCall(request).execute();
-				String result = response.body().string();
-				Timber.i("got result from test page: %s", result);
+				checkConn();
 				emitter.onComplete();
 			}
 			catch(Exception e){
@@ -248,5 +288,5 @@ public class WifiHelper implements WifiDataManager
 				emitter.onError(e);
 			}
 		});
-	}
+	}*/
 }
