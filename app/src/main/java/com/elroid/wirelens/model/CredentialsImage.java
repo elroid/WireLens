@@ -40,4 +40,13 @@ public class CredentialsImage
 			imageFile = FileUtils.createFile(ctx, bitmap);
 		return imageFile;
 	}
+
+	@Override
+	public String toString(){
+		final StringBuilder sb = new StringBuilder("CredentialsImage{");
+		sb.append("bitmap=").append(bitmap);
+		sb.append(", imageFile=").append(imageFile);
+		sb.append('}');
+		return sb.toString();
+	}
 }

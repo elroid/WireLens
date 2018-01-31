@@ -8,6 +8,7 @@ import com.elroid.wirelens.data.local.GoogleVisionDataStore;
 import com.elroid.wirelens.data.local.SimpleTextParser;
 import com.elroid.wirelens.data.local.wifi.WifiHelper;
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient;
+import com.elroid.wirelens.domain.ConnectionGuesser;
 import com.elroid.wirelens.domain.ConnectionManager;
 import com.elroid.wirelens.domain.DataManager;
 import com.elroid.wirelens.domain.GoogleVisionLocalRepository;
@@ -97,9 +98,16 @@ public class AppModule
 
 	@Provides
 	@Singleton
-	ConnectionManager provideConnectionManager(DataManager dataManager,
+	ConnectionGuesser provideConnectionGuesser(DataManager dataManager,
 											   TextParser textParser,
 											   WifiDataManager wifiManager){
-		return new ConnectionManager(dataManager, textParser, wifiManager);
+		return new ConnectionGuesser(dataManager, textParser, wifiManager);
+	}
+
+	@Provides
+	@Singleton
+	ConnectionManager provideConnectionManager(WifiDataManager wifiManager,
+											   ConnectionGuesser guesser){
+		return new ConnectionManager(wifiManager, guesser);
 	}
 }

@@ -2,18 +2,11 @@ package com.elroid.wirelens.domain;
 
 import com.elroid.wirelens.model.ConnectionAttempt;
 import com.elroid.wirelens.model.CredentialsImage;
-import com.elroid.wirelens.model.TextParserResponse;
-import com.elroid.wirelens.model.WifiNetwork;
-import com.elroid.wirelens.util.GenUtils;
-import com.elroid.wirelens.util.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 /**
@@ -26,97 +19,44 @@ import timber.log.Timber;
  */
 public class ConnectionManager
 {
-	private final DataManager dataManager;
-	private final TextParser textParser;
 	private final WifiDataManager wifiManager;
+	private final ConnectionGuesser guesser;
 
 	@Inject
-	public ConnectionManager(DataManager dataManager, TextParser textParser, WifiDataManager wifiManager){
-		this.dataManager = dataManager;
-		this.textParser = textParser;
+	public ConnectionManager(WifiDataManager wifiManager, ConnectionGuesser guesser){
 		this.wifiManager = wifiManager;
+		this.guesser = guesser;
 	}
 
-	private String verifySSID(List<WifiNetwork> networks, String parsedSsid){
-		for(int i = 0; i < networks.size(); i++){
-			WifiNetwork wifiNetwork = networks.get(i);
-			Timber.v("checking %s against %s...", parsedSsid, wifiNetwork.getSsid());
-			//todo ideally this should be somewhat fuzzy
-			if(TextUtils.containsIgnoreCase(wifiNetwork.getSsid(), parsedSsid)){
-				Timber.v("found match!");
-				return wifiNetwork.getSsid();
-			}
-		}
-		Timber.v("no matches found");
-		return null;
-	}
+	public Single<Boolean> connect(CredentialsImage image){
+		Timber.d("connect(image:%s)", image);
 
-	public Observable<ConnectionAttempt> connect(CredentialsImage image/*, boolean fuzzyPassword*/){
-		Observable<TextParserResponse> textParseResult = dataManager.extractText(image)
-			.toObservable()
-			.flatMap(textParser::parseResponse);
-		return connect(textParseResult);
-	}
-
-	public Observable<ConnectionAttempt> connect(Observable<TextParserResponse> textParseResult/*, boolean fuzzyPassword*/){
-		Timber.d("connect(textParseResult:%s)", textParseResult);
-
-		/*Observable<TextParserResponse> textParseResult = dataManager.extractText(image)
-			.toObservable().flatMap(textParser::parseResponse);*/
-		Observable<List<WifiNetwork>> networksAvailable = wifiManager.scan();
-
-		return Observable.combineLatest(textParseResult,
-			networksAvailable,
-			(tpr, wifiNetworks) -> {
-				Timber.d("try combo (textParserResponse:%s, wifiNetworks:%s)", tpr, wifiNetworks);
-				if(tpr.hasBoth()){
-					Timber.d("Yay! we found ssid and password in image. Verifying ssid...");
-					//ideal! we have something to try, check it against the available ssid
-					String verifiedSSID = verifySSID(wifiNetworks, tpr.getSsid());
-					if(!GenUtils.isBlank(verifiedSSID)){
-						//sweet - everything is perfect
-						Timber.d("SSID %s verified!", verifiedSSID);
-						return Collections.singletonList(new ConnectionAttempt(verifiedSSID, tpr.getPassword()));
-					}
-					else{
-						//hmm, can't verify the ssid....try it anyway?
-						//Timber.w("SSID was not found: %s (trying anyway)", tpr.getSsid());
-						//return Collections.singletonList(new ConnectionAttempt(tpr.getSsid(), tpr.getPassword()));
-						throw new Exception("Unable to find wifi network '" + tpr.getSsid() + "'");
-					}
+		return Single.create(emitter -> guesser.guess(image)
+			.subscribe(new DisposableObserver<ConnectionAttempt>()
+			{
+				@Override
+				public void onNext(ConnectionAttempt ca){
+					Timber.i("attempting connect: %s", ca);
+					wifiManager.connect(ca.getSsid(), ca.getPassword())
+						.subscribe(() -> {
+							Timber.i("connection successful!");
+							emitter.onSuccess(true);
+							dispose();
+						}, e -> Timber.w(e, "connect was unsuccessful"));
 				}
-				else if(tpr.hasPassword()){
-					Timber.d("image seems to have a password at least - trying nearby networks...");
-					int MAX = 3;
-					//try the password with the top MAX networks
-					List<ConnectionAttempt> attempts = new ArrayList<>(MAX);
-					for(int i = 0; i < wifiNetworks.size(); i++){
-						WifiNetwork wifiNetwork = wifiNetworks.get(i);
-						attempts.add(new ConnectionAttempt(wifiNetwork.getSsid(), tpr.getPassword()));
-						if(attempts.size() >= MAX)
-							break;
-					}
-					return attempts;
-				}
-				else if(tpr.hasSsid()){
-					Timber.d("we found an ssid but no password! Assuming %s is an open network...", tpr.getSsid());
-					String verifiedSSID = verifySSID(wifiNetworks, tpr.getSsid());
-					if(!GenUtils.isBlank(verifiedSSID)){
-						//sweet - everything is perfect
-						Timber.d("Open SSID %s verified", verifiedSSID);
-						return Collections.singletonList(new ConnectionAttempt(verifiedSSID, ""));
-					}
-					else{
-						//hmm, can't verify the ssid....try it anyway?
-						Timber.w("SSID was not found: %s (trying open anyway)", tpr.getSsid());
-						return Collections.singletonList(new ConnectionAttempt(tpr.getSsid(), ""));
-					}
 
+				@Override
+				public void onError(Throwable e){
+					Timber.w(e, "Error connecting!");
+					emitter.onError(e);
 				}
-				else{
-					Timber.w("we found neither an ssid nor a password in this image... throwing an error");
-					throw new Exception("No credentials found in image");
+
+				@Override
+				public void onComplete(){
+					Timber.i("connection attempts complete");
+					if(!emitter.isDisposed())
+						emitter.onSuccess(false);
 				}
-			}).flatMapIterable(connectionAttempts -> connectionAttempts);
+			}));
 	}
 }

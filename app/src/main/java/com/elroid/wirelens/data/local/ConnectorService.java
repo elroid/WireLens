@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 /**
@@ -61,8 +60,6 @@ public class ConnectorService extends Service
 		super.onCreate();
 	}
 
-	Disposable connDisp;
-
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		Timber.d("onStartCommand(intent:%s, flags:%s, startId:%s)", intent, flags, startId);
@@ -74,22 +71,16 @@ public class ConnectorService extends Service
 				throw new IOException("File path was not specified");
 			File file = new File(filePath);
 
-			connDisp =
-				connManager.connect(new CredentialsImage(file))
-					.subscribeOn(schedulers.io())
-					.observeOn(schedulers.io())
-					.doOnComplete(() -> {
-						Timber.i("connection attempts complete");
-						done(false);
-					})
-					.subscribe(ca -> {
-						Timber.i("attempting connect: %s", ca);
-						wifiManager.connect(ca.getSsid(), ca.getPassword())
-							.subscribe(() -> {
-								Timber.i("connection successful!");
-								done(true);
-							}, e -> Timber.w(e, "connect was unsuccessful"));
-					}, e -> Timber.w(e, "Error connecting!"));
+			connManager.connect(new CredentialsImage(file))
+				.subscribeOn(schedulers.io())
+				.observeOn(schedulers.io())
+				.subscribe(success -> {
+					Timber.d("done with connection, success:%s", success);
+					done(success);
+				}, e -> {
+					Timber.w(e, "Error connecting");
+					done(false);
+				});
 
 			Timber.d("STARTING STICKY");
 			return START_STICKY;
@@ -104,10 +95,6 @@ public class ConnectorService extends Service
 
 	private void done(boolean success){
 		vibrateResult(success);
-		if(connDisp != null && !connDisp.isDisposed()){
-			Timber.i("disposing connector");
-			connDisp.dispose();
-		}
 		stopSelf();
 	}
 
@@ -127,7 +114,7 @@ public class ConnectorService extends Service
 
 	private void vibrateResult(boolean success){
 		try{
-			Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+			Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 			if(vibrator != null && vibrator.hasVibrator()){
 				long[] pattern;
 				if(success)
