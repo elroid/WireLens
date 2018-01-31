@@ -5,6 +5,7 @@ import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.TextParserResponse;
 import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.util.GenUtils;
+import com.elroid.wirelens.util.Printer;
 import com.elroid.wirelens.util.TextUtils;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class ConnectionGuesser
 	}
 
 	public Observable<ConnectionAttempt> guess(Observable<TextParserResponse> textParseResult/*, boolean fuzzyPassword*/){
-		Timber.d("connect(textParseResult:%s)", textParseResult);
+		Timber.d("connect(textParseResult:%s) onThread:%s", textParseResult, Printer.printThread());
 
 		/*Observable<TextParserResponse> textParseResult = dataManager.extractText(image)
 			.toObservable().flatMap(textParser::parseResponse);*/

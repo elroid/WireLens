@@ -14,6 +14,7 @@ import android.text.format.Formatter;
 import com.elroid.wirelens.domain.WifiDataManager;
 import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.util.GenUtils;
+import com.elroid.wirelens.util.Printer;
 import com.elroid.wirelens.util.WifiUtils;
 
 import java.net.UnknownHostException;
@@ -97,7 +98,8 @@ public class WifiHelper implements WifiDataManager
 
 	@Override
 	public Completable connect(String ssid, String password){
-		Timber.d("connect(ssid:%s, password:%s)", ssid, password);
+		Timber.d("connect(ssid:%s, password:%s) on thread:%s",
+			ssid, password, Printer.printThread());
 		return Completable.create(emitter -> {
 			int netId = -1;
 			try{
@@ -160,10 +162,14 @@ public class WifiHelper implements WifiDataManager
 							Thread.sleep(500);
 							wifiInfo = wifiManager.getConnectionInfo();
 							supplicantState = wifiInfo.getSupplicantState();
-							Timber.i("supplicant state is still %s and ip is %s",
-								supplicantState, getCurrentIp());
-							if(supplicantState == SupplicantState.DISCONNECTED)
+							if(supplicantState == SupplicantState.COMPLETED)
+								Timber.i("supplicant state is COMPLETED!");
+							else if(supplicantState == SupplicantState.DISCONNECTED)
 								throw new Exception("Connection failed (disconnected)");
+							else
+								Timber.i("supplicant state is still %s and ip is %s",
+								supplicantState, getCurrentIp());
+
 							/*if(supplicantState == SupplicantState.SCANNING)
 								throw new Exception("Connection failed (scanning agin)");*/
 						}
@@ -183,7 +189,9 @@ public class WifiHelper implements WifiDataManager
 				}
 				Timber.i("got ip: %s", ip);
 
-				int NUM_ATTEMPTS = 4;
+				int NUM_ATTEMPTS = 5;
+				int INCR = 250;
+				int delay = 500;
 				for(int i = 0; i < NUM_ATTEMPTS; i++){
 					boolean lastTime = i == NUM_ATTEMPTS - 1;
 					Timber.d("checking connection...");
@@ -197,7 +205,7 @@ public class WifiHelper implements WifiDataManager
 						}
 						else{
 							Timber.w("Unable to connect (unknown host)");
-							Thread.sleep(500);
+							Thread.sleep(delay);
 						}
 					}
 					catch(Exception e){
@@ -206,9 +214,10 @@ public class WifiHelper implements WifiDataManager
 						}
 						else{
 							Timber.w("Unable to connect: %s", e.getMessage());
-							Thread.sleep(500);
+							Thread.sleep(delay);
 						}
 					}
+					delay += INCR;
 				}
 				emitter.onComplete();
 			}
