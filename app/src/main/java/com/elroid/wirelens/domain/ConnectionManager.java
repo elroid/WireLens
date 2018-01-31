@@ -37,7 +37,8 @@ public class ConnectionManager
 				@Override
 				public void onNext(ConnectionAttempt ca){
 					Timber.i("attempting connect: %s", ca);
-					wifiManager.connect(ca.getSsid(), ca.getPassword())
+					wifiManager
+						.connect(ca.getSsid(), ca.getPassword())
 						.subscribe(() -> {
 							Timber.i("connection successful!");
 							emitter.onSuccess(true);

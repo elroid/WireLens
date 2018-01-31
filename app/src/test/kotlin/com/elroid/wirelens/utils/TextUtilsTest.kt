@@ -1,5 +1,6 @@
 package com.elroid.wirelens.utils
 
+import com.elroid.wirelens.framework.RoboelectricTest
 import com.elroid.wirelens.model.GoogleVisionResponse
 import com.elroid.wirelens.util.TextUtils
 import org.junit.Assert.*
@@ -15,7 +16,7 @@ import kotlin.test.assertEquals
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-class TextUtilsTest {
+class TextUtilsTest: RoboelectricTest() {
 
 	@Test
 	fun getValueFromLineStartingWith_givenText_returnsToken() {

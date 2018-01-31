@@ -1,6 +1,7 @@
 package com.elroid.wirelens
 
 import com.elroid.wirelens.data.local.SimpleTextParser
+import com.elroid.wirelens.framework.RoboelectricTest
 import com.elroid.wirelens.model.GoogleVisionResponse
 import com.elroid.wirelens.model.TextParserResponse
 import org.junit.Assert.assertArrayEquals
@@ -16,7 +17,7 @@ import kotlin.test.assertEquals
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-class TextParserTest {
+class TextParserTest: RoboelectricTest() {
 
 	@Test
 	fun getLines_givenNormalText_returnsLines() {

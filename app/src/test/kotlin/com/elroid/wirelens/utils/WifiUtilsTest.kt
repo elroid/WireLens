@@ -1,6 +1,6 @@
 package com.elroid.wirelens.utils
 
-import com.elroid.wirelens.RoboelectricTest
+import com.elroid.wirelens.framework.RoboelectricTest
 import com.elroid.wirelens.util.WifiUtils
 import org.junit.Test
 import kotlin.test.assertFalse

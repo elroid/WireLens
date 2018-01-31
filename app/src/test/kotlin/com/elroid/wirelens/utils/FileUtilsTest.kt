@@ -1,7 +1,7 @@
 package com.elroid.wirelens.utils
 
 import android.net.Uri
-import com.elroid.wirelens.RoboelectricTest
+import com.elroid.wirelens.framework.RoboelectricTest
 import com.elroid.wirelens.util.FileUtils
 import org.junit.Test
 import kotlin.test.assertEquals

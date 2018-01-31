@@ -1,11 +1,16 @@
-package com.elroid.wirelens
+package com.elroid.wirelens.framework
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
+import com.elroid.wirelens.BuildConfig
+import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLog
+import timber.log.Timber
 import java.io.File
 
 /**
@@ -21,17 +26,24 @@ import java.io.File
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-    application = RoboelectricTest.ApplicationStub::class,
-    sdk = intArrayOf(21))
+	application = RoboelectricTest.ApplicationStub::class,
+	sdk = intArrayOf(21))
 abstract class RoboelectricTest {
 
-  fun getCtx(): Context {
-    return RuntimeEnvironment.application
-  }
+	@Before
+	@Throws(Exception::class)
+	fun setUp() {
+		ShadowLog.stream = System.out
+		Timber.plant(SystemOutTree(Log.VERBOSE))
+	}
 
-  fun cacheDir(): File {
-    return getCtx().cacheDir
-  }
+	fun getCtx(): Context {
+		return RuntimeEnvironment.application
+	}
 
-  internal class ApplicationStub : Application()
+	fun cacheDir(): File {
+		return getCtx().cacheDir
+	}
+
+	internal class ApplicationStub : Application()
 }
