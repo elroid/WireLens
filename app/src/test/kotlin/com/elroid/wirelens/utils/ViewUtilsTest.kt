@@ -2,8 +2,8 @@ package com.elroid.wirelens.utils
 
 import com.elroid.wirelens.RoboelectricTest
 import com.elroid.wirelens.util.ViewUtils
-import org.amshove.kluent.shouldEqual
 import org.junit.Test
+import kotlin.test.assertEquals
 
 /**
  *
@@ -16,12 +16,12 @@ import org.junit.Test
  */
 class ViewUtilsTest : RoboelectricTest() {
 
-  @Test
-  fun testDipPx() {
-    val dp: Float = 123.0f
-    val px = ViewUtils.dpToPx(dp)
-    val newdp = ViewUtils.pxToDp(px)
-    newdp shouldEqual dp
-  }
+	@Test
+	fun testDipPx() {
+		val dp = 123.0f
+		val px = ViewUtils.dpToPx(dp)
+		val newdp = ViewUtils.pxToDp(px)
+		assertEquals(dp, newdp)
+	}
 
 }

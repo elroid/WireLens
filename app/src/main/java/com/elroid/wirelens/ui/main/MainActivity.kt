@@ -11,7 +11,6 @@ import com.elroid.wirelens.R
 import com.elroid.wirelens.data.local.ConnectorService
 import com.elroid.wirelens.domain.WifiDataManager
 import com.elroid.wirelens.model.CredentialsImage
-import com.elroid.wirelens.model.WifiNetwork
 import com.elroid.wirelens.ui.CAMERA_REQUEST_CODE
 import com.elroid.wirelens.ui.base.BaseActivity
 import com.elroid.wirelens.util.FileUtils
@@ -22,16 +21,10 @@ import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener
 import dagger.android.AndroidInjection
 import io.reactivex.Completable
-import io.reactivex.Observer
-import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.reactivestreams.Subscriber
-import org.reactivestreams.Subscription
 import timber.log.Timber
 import javax.inject.Inject
 

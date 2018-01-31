@@ -71,7 +71,7 @@ class ConnectionManagerTest {
 	}
 
 	@Test
-	fun connect_givenSsidNotFound_emitsSingleAttempt(){
+	fun connect_givenSsidNotFound_emitsError(){
 		//given
 		val tpro = Observable.just(TextParserResponse("Some Other Network", "myPassword"))
 		val expected = ConnectionAttempt("Some Other Network", "myPassword")
@@ -80,10 +80,10 @@ class ConnectionManagerTest {
 		val testObserver = connectionManager.connect(tpro).test()
 
 		//then
-		testObserver.assertNoErrors()
-		assertEquals(testObserver.valueCount(), 1)
+		testObserver.assertError(Exception::class.java)
+		/*assertEquals(testObserver.valueCount(), 1)
 		val actual = testObserver.values().get(0)
-		assertEquals(expected, actual)
+		assertEquals(expected, actual)*/
 	}
 
 	@Test

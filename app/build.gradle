@@ -119,7 +119,6 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$project.kotlinVersion"
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
-    testImplementation 'org.amshove.kluent:kluent:1.14'
 
     androidTestImplementation "com.android.support.test:runner:$project.supportTestVersion"
     androidTestImplementation "com.android.support.test:rules:$project.supportTestVersion"
