@@ -5,11 +5,14 @@ import android.net.wifi.WifiManager;
 
 import com.elroid.wirelens.App;
 import com.elroid.wirelens.data.local.GoogleVisionDataStore;
+import com.elroid.wirelens.data.local.SimpleTextParser;
 import com.elroid.wirelens.data.local.wifi.WifiHelper;
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient;
+import com.elroid.wirelens.domain.ConnectionManager;
 import com.elroid.wirelens.domain.DataManager;
 import com.elroid.wirelens.domain.GoogleVisionLocalRepository;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
+import com.elroid.wirelens.domain.TextParser;
 import com.elroid.wirelens.domain.WifiDataManager;
 
 import java.util.concurrent.TimeUnit;
@@ -77,12 +80,26 @@ public class AppModule
 	@Provides
 	@Singleton
 	WifiManager provideWifiManager(Context ctx){
-		return (WifiManager)ctx.getSystemService(Context.WIFI_SERVICE);
+		return (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
 	}
 
 	@Provides
 	@Singleton
 	WifiDataManager provideWifiDataManager(WifiManager wifiManager, Context ctx){
 		return new WifiHelper(wifiManager, ctx);
+	}
+
+	@Provides
+	@Singleton
+	TextParser provideTextParser(){
+		return new SimpleTextParser();
+	}
+
+	@Provides
+	@Singleton
+	ConnectionManager provideConnectionManager(DataManager dataManager,
+											   TextParser textParser,
+											   WifiDataManager wifiManager){
+		return new ConnectionManager(dataManager, textParser, wifiManager);
 	}
 }

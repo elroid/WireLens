@@ -182,7 +182,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 		}*/
 
 		AnnotateImageResponse aResponse = response.getResponses().get(0);
-		Timber.d("raw response: %s", aResponse);
+		Timber.v("raw response: %s", aResponse);
 		TextAnnotation text = aResponse.getFullTextAnnotation();
 
 		String result = text == null ? "" : text.getText();

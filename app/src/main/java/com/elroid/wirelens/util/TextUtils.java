@@ -43,7 +43,7 @@ public class TextUtils
 	}
 
 	public static boolean containsIgnoreCase(String str, String tok){
-		return indexOfIgnoreCase(str, tok) > 0;
+		return str.toUpperCase().contains(tok.toUpperCase());
 	}
 
 	public static boolean equalsIgnoreCase(String str, String tok){

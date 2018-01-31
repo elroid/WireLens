@@ -11,6 +11,7 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<uses-permission android:name="android.permission.VIBRATE"/>
 
 	<application
 		android:name=".App"
@@ -47,6 +48,10 @@
 			android:name=".ui.main.MainActivity"
 			android:theme="@style/AppTheme.NoActionBar"
 			/>
+		<activity
+			android:name=".ui.manual.ManualConnectActivity"
+			/>
+
 
 		<activity
 			android:name=".ui.test.TestActivity"
@@ -54,6 +59,8 @@
 		<activity
 			android:name=".ui.test.TestKotlinActivity"
 			/>
+
+		<service android:name=".data.local.ConnectorService"/>
 	</application>
 
 </manifest>

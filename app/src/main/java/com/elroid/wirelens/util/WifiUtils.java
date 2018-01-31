@@ -57,4 +57,17 @@ public class WifiUtils
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		return WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);
 	}
+
+	public static boolean isValidIp(String ip){
+		if(ip == null) return false;
+		if(ip.equals("0.0.0.0")) return false;
+		if(ip.startsWith("169.254")) return false;
+		return true;
+	}
+
+	public static boolean isSameSsid(String ssid1, String ssid2){
+		String naked1 = ssid1.replace("\"", "");
+		String naked2 = ssid2.replace("\"", "");
+		return TextUtils.equalsIgnoreCase(naked1, naked2);
+	}
 }

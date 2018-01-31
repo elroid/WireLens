@@ -23,7 +23,7 @@ import kotlin.test.assertEquals
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
 class ConnectionManagerTest {
-	val wifiNetworks = Single.just(listOf(
+	val wifiNetworks = Observable.just(listOf(
 		WifiNetwork("Strong Network", -10),
 		WifiNetwork("Decent Network", -15),
 		WifiNetwork("Normal Network", -20),

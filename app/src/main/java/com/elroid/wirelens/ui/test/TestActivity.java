@@ -145,14 +145,14 @@ public class TestActivity extends BaseActivity
 		wifiDataManager.scan()
 			.subscribeOn(schedulers.io())
 			.observeOn(schedulers.ui())
-			.subscribe(new SingleObserver<List<WifiNetwork>>(){
+			.subscribe(new Observer<List<WifiNetwork>>(){
 				@Override
 				public void onSubscribe(Disposable d){
 					Timber.d("subscribed to scan");
 				}
 
 				@Override
-				public void onSuccess(List<WifiNetwork> wifiNetworks){
+				public void onNext(List<WifiNetwork> wifiNetworks){
 					Timber.d("got wifi result: %s", wifiNetworks);
 					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
 					// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
@@ -168,6 +168,12 @@ public class TestActivity extends BaseActivity
 				public void onError(Throwable e){
 					Timber.w(e, "Scan error happened");
 				}
+
+				@Override
+				public void onComplete(){
+					Timber.i("Scan complete");
+				}
 			});
+
 	}
 }

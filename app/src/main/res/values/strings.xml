@@ -1,3 +1,5 @@
 <resources>
 	<string name="action_settings">Settings</string>
+	<string name="notification_title">Wirelens is scanning your image</string>
+	<string name="notification_message">When we\'re finished, we\'ll let you know!</string>
 </resources>

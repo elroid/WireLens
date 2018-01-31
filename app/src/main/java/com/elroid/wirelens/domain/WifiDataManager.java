@@ -18,6 +18,6 @@ import io.reactivex.Single;
  */
 public interface WifiDataManager
 {
-	Single<List<WifiNetwork>> scan();
+	Observable<List<WifiNetwork>> scan();
 	Completable connect(String ssid, String password);
 }

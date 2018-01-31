@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.TextView;
 
 import com.elroid.wirelens.R;
+import com.elroid.wirelens.data.local.ConnectorService;
 import com.elroid.wirelens.domain.DataManager;
 import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.ui.base.BaseActivity;
@@ -32,6 +32,7 @@ import timber.log.Timber;
  */
 public class ImporterActivity extends BaseActivity
 {
+	@SuppressWarnings("unused") //so far...
 	public static Intent createIntent(Context ctx){
 		return new Intent(ctx, ImporterActivity.class);
 	}
@@ -39,15 +40,12 @@ public class ImporterActivity extends BaseActivity
 	@Inject DataManager dataManager;
 	@Inject SchedulersFacade schedulers;
 
-	TextView hello;
-
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState){
 		AndroidInjection.inject(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		hello = findViewById(R.id.hello);
 		Intent intent = getIntent();
 		if(intent != null){
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -57,8 +55,8 @@ public class ImporterActivity extends BaseActivity
 					File file = FileUtils.pickedExistingPicture(this, imageUri);
 					Timber.d("Got file: %s", file);
 
-					hello.setText("Analysing...");
-					dataManager.extractText(new CredentialsImage(file))
+					//hello.setText("Analysing...");
+					/*dataManager.extractText(new CredentialsImage(file))
 						.subscribeOn(schedulers.io())
 						.observeOn(schedulers.ui())
 						.subscribe(myData -> {
@@ -66,8 +64,8 @@ public class ImporterActivity extends BaseActivity
 							hello.setText(myData.getText());
 						}, e -> {
 							Timber.w(e, "Error getting vision ocr data");
-						});
-
+						});*/
+					ConnectorService.start(getCtx(), new CredentialsImage(file));
 				}
 				catch(IOException e){
 					Timber.w(e, "Error getting image file");

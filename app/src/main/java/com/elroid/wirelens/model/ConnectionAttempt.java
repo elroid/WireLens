@@ -18,6 +18,14 @@ public class ConnectionAttempt
 		this.password = password;
 	}
 
+	public String getSsid(){
+		return ssid;
+	}
+
+	public String getPassword(){
+		return password;
+	}
+
 	@Override
 	public String toString(){
 		final StringBuilder sb = new StringBuilder("ConnectionAttempt{");

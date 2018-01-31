@@ -1,31 +1,19 @@
 package com.elroid.wirelens.domain;
 
-import android.graphics.Bitmap;
-
 import com.elroid.wirelens.model.ConnectionAttempt;
 import com.elroid.wirelens.model.CredentialsImage;
-import com.elroid.wirelens.model.GoogleVisionResponse;
 import com.elroid.wirelens.model.TextParserResponse;
 import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.util.GenUtils;
 import com.elroid.wirelens.util.TextUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Function;
 import timber.log.Timber;
 
 /**
@@ -52,10 +40,14 @@ public class ConnectionManager
 	private String verifySSID(List<WifiNetwork> networks, String parsedSsid){
 		for(int i = 0; i < networks.size(); i++){
 			WifiNetwork wifiNetwork = networks.get(i);
+			Timber.v("checking %s against %s...", parsedSsid, wifiNetwork.getSsid());
 			//todo ideally this should be somewhat fuzzy
-			if(TextUtils.equalsIgnoreCase(parsedSsid, wifiNetwork.getSsid()))
+			if(TextUtils.containsIgnoreCase(wifiNetwork.getSsid(), parsedSsid)){
+				Timber.v("found match!");
 				return wifiNetwork.getSsid();
+			}
 		}
+		Timber.v("no matches found");
 		return null;
 	}
 
@@ -67,10 +59,11 @@ public class ConnectionManager
 	}
 
 	public Observable<ConnectionAttempt> connect(Observable<TextParserResponse> textParseResult/*, boolean fuzzyPassword*/){
+		Timber.d("connect(textParseResult:%s)", textParseResult);
 
 		/*Observable<TextParserResponse> textParseResult = dataManager.extractText(image)
 			.toObservable().flatMap(textParser::parseResponse);*/
-		Observable<List<WifiNetwork>> networksAvailable = wifiManager.scan().toObservable();
+		Observable<List<WifiNetwork>> networksAvailable = wifiManager.scan();
 
 		return Observable.combineLatest(textParseResult,
 			networksAvailable,
@@ -87,8 +80,9 @@ public class ConnectionManager
 					}
 					else{
 						//hmm, can't verify the ssid....try it anyway?
-						Timber.w("SSID was not found: %s (trying anyway)", tpr.getSsid());
-						return Collections.singletonList(new ConnectionAttempt(tpr.getSsid(), tpr.getPassword()));
+						//Timber.w("SSID was not found: %s (trying anyway)", tpr.getSsid());
+						//return Collections.singletonList(new ConnectionAttempt(tpr.getSsid(), tpr.getPassword()));
+						throw new Exception("Unable to find wifi network '" + tpr.getSsid() + "'");
 					}
 				}
 				else if(tpr.hasPassword()){

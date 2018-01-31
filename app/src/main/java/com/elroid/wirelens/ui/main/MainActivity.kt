@@ -22,12 +22,16 @@ import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener
 import dagger.android.AndroidInjection
 import io.reactivex.Completable
+import io.reactivex.Observer
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -125,6 +129,7 @@ class MainActivity : BaseActivity() {
 			.withPermissions(
 				Manifest.permission.ACCESS_COARSE_LOCATION,
 				Manifest.permission.CHANGE_WIFI_STATE,
+				Manifest.permission.VIBRATE,
 				Manifest.permission.ACCESS_WIFI_STATE)
 			.withListener(CompositeMultiplePermissionsListener(dialogListener, actionListener))
 			.check()
@@ -144,29 +149,41 @@ class MainActivity : BaseActivity() {
 		wifiDataManager?.scan()
 			?.subscribeOn(Schedulers.io())
 			?.observeOn(AndroidSchedulers.mainThread())
-			?.subscribe(object : SingleObserver<List<WifiNetwork>> {
-				override fun onSubscribe(d: Disposable) {
-					Timber.d("subscribed to scan")
+			?.subscribe({
+				Timber.d("got wifi result: %s", it)
+				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+				for (i in it.indices) {
+					val wifiNetwork = it[i]
+					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
+						wifiNetwork.signalLevel))
 				}
+			}, { Timber.w(it, "Error: %s", it.message) },
+				{ Timber.i("Completed") })
 
-				override fun onSuccess(wifiNetworks: List<WifiNetwork>) {
-					Timber.d("got wifi result: %s", wifiNetworks)
-					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
-					// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
-					for (i in wifiNetworks.indices) {
-						val wifiNetwork = wifiNetworks[i]
+		/*?.subscribe(object : Observer<List<WifiNetwork>> {
+			override fun onSubscribe(d: Disposable) {
+				Timber.d("subscribed to scan")
+			}
 
-						Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
-							wifiNetwork.signalLevel))
-						/*narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.ssid,
-							wifiNetwork.signalLevel))*/
+			override fun onSuccess(wifiNetworks: List<WifiNetwork>) {
+				Timber.d("got wifi result: %s", wifiNetworks)
+				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+				for (i in wifiNetworks.indices) {
+					val wifiNetwork = wifiNetworks[i]
+
+					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
+						wifiNetwork.signalLevel))
+					*//*narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.ssid,
+							wifiNetwork.signalLevel))*//*
 					}
 				}
 
 				override fun onError(e: Throwable) {
 					Timber.w(e, "Scan error happened")
 				}
-			})
+			})*/
 	}
 
 /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
