@@ -70,6 +70,22 @@ class ConnectionGuesserTest: RoboelectricTest() {
 	}
 
 	@Test
+	fun guess_givenSsidSlightlyWrong_emitsSingleAttempt(){
+		//given
+		val tpro = Observable.just(TextParserResponse("; STRONG Network ", "myPassword"))
+		val expected = ConnectionAttempt("Strong Network", "myPassword")
+
+		//when
+		val testObserver = connectionGuesser.guess(tpro).test()
+
+		//then
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 1)
+		val actual = testObserver.values().get(0)
+		assertEquals(expected, actual)
+	}
+
+	@Test
 	fun guess_givenSsidNotFound_emitsError(){
 		//given
 		val tpro = Observable.just(TextParserResponse("Some Other Network", "myPassword"))
@@ -130,5 +146,21 @@ class ConnectionGuesserTest: RoboelectricTest() {
 
 		//then
 		testObserver.assertError(Exception::class.java)
+	}
+
+	@Test
+	fun guess_givenSimilarSsid_emitsSingleAttempt(){
+		//given
+		val tpro = Observable.just(TextParserResponse("String Network", "myPassword"))
+		val expected = ConnectionAttempt("Strong Network", "myPassword")
+
+		//when
+		val testObserver = connectionGuesser.guess(tpro).test()
+
+		//then
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 1)
+		val actual = testObserver.values().get(0)
+		assertEquals(expected, actual)
 	}
 }

@@ -4,6 +4,7 @@ import com.elroid.wirelens.model.ConnectionAttempt;
 import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.TextParserResponse;
 import com.elroid.wirelens.model.WifiNetwork;
+import com.elroid.wirelens.util.FuzzyTextUtils;
 import com.elroid.wirelens.util.GenUtils;
 import com.elroid.wirelens.util.Printer;
 import com.elroid.wirelens.util.TextUtils;
@@ -42,8 +43,7 @@ public class ConnectionGuesser
 		for(int i = 0; i < networks.size(); i++){
 			WifiNetwork wifiNetwork = networks.get(i);
 			Timber.v("checking %s against %s...", parsedSsid, wifiNetwork.getSsid());
-			//todo ideally this should be somewhat fuzzy
-			if(TextUtils.containsIgnoreCase(wifiNetwork.getSsid(), parsedSsid)){
+			if(FuzzyTextUtils.matches(wifiNetwork.getSsid(), parsedSsid, 70)){
 				Timber.v("found match!");
 				return wifiNetwork.getSsid();
 			}

@@ -59,6 +59,26 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 	}
 
 	@Test
+	fun sortListBySimilarity_givenStringMixedCase_returnSorted() {
+		//given/when
+		val toMatch = "Closest"
+		val list = listOf(
+			"CLOSET", "Diff", "Clod", "Clearest", "Comet", "Closer", "Closest", "Cleaner"
+		)
+
+		//then
+		val expected = listOf(
+			"Closest", "CLOSET", "Closer"
+		)
+		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, null, 70, 5)
+		//Timber.i("actual: %s", actual)
+		assertArrayEquals(
+			expected.toTypedArray(),
+			actual.toTypedArray()
+		)
+	}
+
+	@Test
 	fun sortListBySimilarity_givenStringListMinMax_returnSorted() {
 		//given/when
 		val toMatch = "Closest"
@@ -109,8 +129,9 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 	@Test
 	fun matches_givenExamples_returnsCorrectly() {
 		assertTrue(FuzzyTextUtils.matches("Something", "Something Else", 70))
-		assertFalse(FuzzyTextUtils.matches("Something", "Else", 20))
+		assertFalse(FuzzyTextUtils.matches("Something", "Else", 35))
 		assertTrue(FuzzyTextUtils.matches("Something", "Somethong", 80))
+		assertTrue(FuzzyTextUtils.matches("Something", "SOMETHING", 80))
 		assertTrue(FuzzyTextUtils.matches("SSID", "S5ID", 70))
 		assertTrue(FuzzyTextUtils.matches("It's a Trap", "It's a Trap ", 95))
 		assertTrue(FuzzyTextUtils.matches("It's a Trap", "; It's a Trap ", 85))

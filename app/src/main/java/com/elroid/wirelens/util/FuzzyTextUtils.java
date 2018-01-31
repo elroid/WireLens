@@ -55,11 +55,11 @@ public class FuzzyTextUtils
 		ArrayMap<String, T> listHash = new ArrayMap<>(list.size());
 		for(int i = 0; i < list.size(); i++){
 			T t = list.get(i);
-			String name = extractor.getName(t);
+			String name = extractor.getName(t).toUpperCase();
 			names.add(name);
 			listHash.put(name, t);
 		}
-		List<ExtractedResult> sorted = FuzzySearch.extractSorted(toMatch, names);
+		List<ExtractedResult> sorted = FuzzySearch.extractSorted(toMatch.toUpperCase(), names);
 		List<T> result = new ArrayList<>(list.size());
 		if(maxLen == 0) maxLen = list.size();
 		int MAX_LEN = Math.min(sorted.size(), maxLen);
@@ -77,7 +77,7 @@ public class FuzzyTextUtils
 	}
 
 	public static boolean matches(String str1, String str2, int minSimilarity){
-		int sim = FuzzySearch.ratio(str1, str2);
+		int sim = FuzzySearch.ratio(str1.toUpperCase(), str2.toUpperCase());
 		Timber.v("matches(%s, %s): %s", str1, str2, sim);
 		return sim >= minSimilarity;
 	}
