@@ -82,4 +82,81 @@ public class FuzzyTextUtils
 		return sim >= minSimilarity;
 	}
 
+	private static class CharAlt
+	{
+		private char[] alts;
+
+		public CharAlt(char... alts){
+			this.alts = alts;
+		}
+	}
+
+	private static List<Character> allAlts;
+	private static ArrayMap<Character, CharAlt> altMap;
+
+	static{
+		List<CharAlt> charAlts = new ArrayList<>(20);
+		charAlts.add(new CharAlt('O', 'D', '0'));
+		charAlts.add(new CharAlt('1', 'I', 'l'));
+		charAlts.add(new CharAlt('4', 'A'));
+		charAlts.add(new CharAlt('5', 'S'));
+		charAlts.add(new CharAlt('6', 'G'));
+		charAlts.add(new CharAlt('8', 'B'));
+		allAlts = new ArrayList<>();
+		altMap = new ArrayMap<>();
+		for(int i = 0; i < charAlts.size(); i++){
+			CharAlt charAlt = charAlts.get(i);
+			for(char c : charAlt.alts){
+				allAlts.add(c);
+				altMap.put(c, charAlt);
+			}
+		}
+	}
+
+	public static List<String> findSimilarLookingWords(String word){
+		List<String> result = new ArrayList<>();
+		result.add(word);
+		for(int i = 0; i < word.length(); i++){
+			char c = word.charAt(i);
+			if(allAlts.contains(c)){
+				List<String> similarsForIndex = new ArrayList<>();
+				for(String simWord : result){
+					List<String> similars = findSimilarLookingWords(simWord, i);
+					//Timber.d("found similar(%s) to %s: %s", i, simWord, similars);
+					similarsForIndex.addAll(similars);
+				}
+				result.addAll(similarsForIndex);
+			}
+		}
+		return result;
+	}
+
+	/*private static List<String> removeDuplicates(List<String> list){
+		List<String> result = new ArrayList<>(list.size());
+		Timber.d("pre-dup :%s", list);
+		for(String s : list){
+			if(!result.contains(s))
+				result.add(s);
+		}
+		Timber.d("post-dup:%s", result);
+		return result;
+	}*/
+
+	private static List<String> findSimilarLookingWords(String word, int index){
+		char c = word.charAt(index);
+		CharAlt alt = altMap.get(c);
+		List<String> result = new ArrayList<>(alt.alts.length);
+		for(int i = 0; i < alt.alts.length; i++){
+			char a = alt.alts[i];
+			String sim = setCharAt(word, index, a);
+			if(!word.equals(sim))
+				result.add(sim);
+		}
+		return result;
+	}
+
+	private static String setCharAt(String word, int index, char c){
+		return word.substring(0, index) + c + word.substring(index + 1);
+	}
+
 }

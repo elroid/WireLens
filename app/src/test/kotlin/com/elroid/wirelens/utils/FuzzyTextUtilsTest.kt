@@ -3,9 +3,10 @@ package com.elroid.wirelens.utils
 import com.elroid.wirelens.framework.RoboelectricTest
 import com.elroid.wirelens.util.FuzzyTextUtils
 import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
+import timber.log.Timber
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  *
@@ -136,4 +137,48 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 		assertTrue(FuzzyTextUtils.matches("It's a Trap", "It's a Trap ", 95))
 		assertTrue(FuzzyTextUtils.matches("It's a Trap", "; It's a Trap ", 85))
 	}
+
+	@Test
+	fun findSimilarLookingWords_givenExample1_returnsCorrectly() {
+		val word = "SI"
+		val expected = listOf("SI", "5I", "S1", "51", "Sl", "5l")
+		val actual = FuzzyTextUtils.findSimilarLookingWords(word)
+		assertArraysContainSameElements(expected, actual)
+	}
+
+	@Test
+	fun findSimilarLookingWords_givenExample2_returnsCorrectly() {
+		val word = "456"
+		val expected = listOf("456", "A56", "4S6", "AS6", "45G", "A5G", "4SG", "ASG")
+		val actual = FuzzyTextUtils.findSimilarLookingWords(word)
+		assertArraysContainSameElements(expected, actual)
+	}
+
+	@Test
+	fun findSimilarLookingWords_givenExample3_returnsCorrectly() {
+		val word = "SSI"
+		val expected = listOf(
+			"SSI", "5SI", "S5I", "55I",
+			"SSl", "5Sl", "S5l", "55l",
+			"SS1", "5S1", "S51", "551"
+		)
+		val actual = FuzzyTextUtils.findSimilarLookingWords(word)
+		assertArraysContainSameElements(expected, actual)
+	}
+
+	@Test
+	fun findSimilarLookingWords_givenExample4_returnsCorrectly() {
+		val word = "Password"
+		val expected = listOf("Password")
+		val actual = FuzzyTextUtils.findSimilarLookingWords(word)
+		assertArraysContainSameElements(expected, actual)
+	}
+
+	private fun assertArraysContainSameElements(expected: List<String>, actual: List<String>) {
+		Timber.d("assertArraysContainSameElements:\nExpected:%s\nActual  :%s", expected, actual)
+		val expA = expected.sortedBy { it }
+		val actA = actual.sortedBy { it }
+		assertArrayEquals(expA.toTypedArray(), actA.toTypedArray())
+	}
+
 }
