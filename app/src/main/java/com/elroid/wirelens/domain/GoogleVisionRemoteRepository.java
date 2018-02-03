@@ -1,7 +1,7 @@
 package com.elroid.wirelens.domain;
 
 import com.elroid.wirelens.model.CredentialsImage;
-import com.elroid.wirelens.model.GoogleVisionResponse;
+import com.elroid.wirelens.model.OcrResponse;
 
 import io.reactivex.Single;
 
@@ -15,5 +15,5 @@ import io.reactivex.Single;
  */
 public interface GoogleVisionRemoteRepository
 {
-	Single<GoogleVisionResponse> getVisionResponse(CredentialsImage image);
+	Single<OcrResponse> getVisionResponse(CredentialsImage image);
 }

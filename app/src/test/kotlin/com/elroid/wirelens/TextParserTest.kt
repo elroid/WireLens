@@ -2,7 +2,7 @@ package com.elroid.wirelens
 
 import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.framework.RoboelectricTest
-import com.elroid.wirelens.model.GoogleVisionResponse
+import com.elroid.wirelens.model.OcrResponse
 import com.elroid.wirelens.model.TextParserResponse
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
@@ -23,7 +23,7 @@ class TextParserTest: RoboelectricTest() {
 	fun getLines_givenNormalText_returnsLines() {
 
 		//given
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
             |line1
             |line2
@@ -45,7 +45,7 @@ class TextParserTest: RoboelectricTest() {
 	fun getSSID_givenTextWithOneSSID_returnsOneSSID() {
 
 		//given
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
             |some:line1
             |ssid: line2
@@ -67,7 +67,7 @@ class TextParserTest: RoboelectricTest() {
 	fun getSSID_givenTextWithTwoSSIDs_returnsTwoSSIDs() {
 
 		//given
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
             |some:line1
             |ssid: line2
@@ -89,7 +89,7 @@ class TextParserTest: RoboelectricTest() {
 	fun parseResponse_givenDroidconData_returnsCorrectCredentials() {
 
 		//given
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
             |droidcon
             |#droidconUK
@@ -118,7 +118,7 @@ class TextParserTest: RoboelectricTest() {
 	fun parseResponse_givenDroidcon2Data_returnsCorrectCredentials() {
 
 		//given
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
 			|droidcon
 			|LONDON

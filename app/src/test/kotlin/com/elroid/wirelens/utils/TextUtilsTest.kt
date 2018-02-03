@@ -1,7 +1,7 @@
 package com.elroid.wirelens.utils
 
 import com.elroid.wirelens.framework.RoboelectricTest
-import com.elroid.wirelens.model.GoogleVisionResponse
+import com.elroid.wirelens.model.OcrResponse
 import com.elroid.wirelens.util.TextUtils
 import org.junit.Assert.*
 import org.junit.Test
@@ -20,7 +20,7 @@ class TextUtilsTest: RoboelectricTest() {
 
 	@Test
 	fun getValueFromLineStartingWith_givenText_returnsToken() {
-		val gvr = GoogleVisionResponse(
+		val gvr = OcrResponse(
 			"""
             |some:line1
             |thing: line2

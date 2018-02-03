@@ -10,12 +10,12 @@ import org.json.JSONObject;
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-public class GoogleVisionResponse
+public class OcrResponse
 {
 	private String text;
 	private String[] lines;
 
-	public GoogleVisionResponse(String text){
+	public OcrResponse(String text){
 		this.text = text;
 	}
 

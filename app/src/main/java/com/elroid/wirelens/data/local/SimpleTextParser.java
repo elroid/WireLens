@@ -1,7 +1,7 @@
 package com.elroid.wirelens.data.local;
 
 import com.elroid.wirelens.domain.TextParser;
-import com.elroid.wirelens.model.GoogleVisionResponse;
+import com.elroid.wirelens.model.OcrResponse;
 import com.elroid.wirelens.model.TextParserResponse;
 import com.elroid.wirelens.util.TextUtils;
 
@@ -18,25 +18,25 @@ import io.reactivex.Observable;
 public class SimpleTextParser implements TextParser
 {
 	@Override
-	public Observable<TextParserResponse> parseResponse(GoogleVisionResponse gvr){
+	public Observable<TextParserResponse> parseResponse(OcrResponse gvr){
 		return Observable.combineLatest(
 			getSSID(gvr).defaultIfEmpty(""),
 			getPassword(gvr).defaultIfEmpty(""),
 			(ssid, password) -> new TextParserResponse(gvr.getText(), ssid, password));
 	}
 
-	public Observable<String> getSSID(GoogleVisionResponse gvr){
+	public Observable<String> getSSID(OcrResponse gvr){
 		return getValue(gvr, ssidTokens);
 	}
 
-	private Observable<String> getPassword(GoogleVisionResponse gvr){
+	private Observable<String> getPassword(OcrResponse gvr){
 		return getValue(gvr, passwordTokens);
 	}
 
 	private static final String[] ssidTokens = new String[]{"ssid", "wifi ssid"};
 	private static final String[] passwordTokens = new String[]{"Password", "wpa-psk"};
 
-	private Observable<String> getValue(GoogleVisionResponse gvr, String[] tokens){
+	private Observable<String> getValue(OcrResponse gvr, String[] tokens){
 		return Observable.create(emitter -> {
 			try{
 				for(String token : tokens){

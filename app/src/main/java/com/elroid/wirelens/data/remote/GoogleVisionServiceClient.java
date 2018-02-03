@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
 import com.elroid.wirelens.model.CredentialsImage;
-import com.elroid.wirelens.model.GoogleVisionResponse;
+import com.elroid.wirelens.model.OcrResponse;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -61,13 +61,13 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 
 
 	@Override
-	public Single<GoogleVisionResponse> getVisionResponse(CredentialsImage image){
+	public Single<OcrResponse> getVisionResponse(CredentialsImage image){
 		//return Single.just(new GoogleVisionResponse("Your message here"));
 		return Single.create(emitter -> {
 			try{
 				Bitmap bitmap = image.getBitmap();
 				bitmap = scaleBitmapDown(bitmap, MAX_BITMAP_DIM);
-				GoogleVisionResponse gvr = callGoogleVision(bitmap);
+				OcrResponse gvr = callGoogleVision(bitmap);
 				emitter.onSuccess(gvr);
 			}
 			catch(Exception e){
@@ -99,7 +99,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 		return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
 	}
 
-	private GoogleVisionResponse callGoogleVision(Bitmap bitmap) throws IOException{
+	private OcrResponse callGoogleVision(Bitmap bitmap) throws IOException{
 
 		HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
 		JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
@@ -173,7 +173,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 
 	}
 
-	private GoogleVisionResponse convertResponseToString(BatchAnnotateImagesResponse response){
+	private OcrResponse convertResponseToString(BatchAnnotateImagesResponse response){
 		/*try{
 			Timber.v("Response: " + response.toPrettyString());
 		}
@@ -187,7 +187,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 
 		String result = text == null ? "" : text.getText();
 		Timber.d("returning google image result: '%s'", result);
-		return new GoogleVisionResponse(result);
+		return new OcrResponse(result);
 	}
 
 	/**

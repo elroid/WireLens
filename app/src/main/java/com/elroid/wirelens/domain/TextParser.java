@@ -1,6 +1,6 @@
 package com.elroid.wirelens.domain;
 
-import com.elroid.wirelens.model.GoogleVisionResponse;
+import com.elroid.wirelens.model.OcrResponse;
 import com.elroid.wirelens.model.TextParserResponse;
 
 import io.reactivex.Observable;
@@ -15,5 +15,5 @@ import io.reactivex.Observable;
  */
 public interface TextParser
 {
-	Observable<TextParserResponse> parseResponse(GoogleVisionResponse gvr);
+	Observable<TextParserResponse> parseResponse(OcrResponse gvr);
 }
