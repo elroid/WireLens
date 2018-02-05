@@ -4,12 +4,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,14 +43,18 @@ public class FileUtils
 		InputStream pictureInputStream = context.getContentResolver().openInputStream(photoUri);
 		File directory = tempImageDirectory(context);
 		File photoFile = new File(directory, UUID.randomUUID().toString() + "." + getExtension(context, photoUri));
-		photoFile.createNewFile();
+		if(!photoFile.createNewFile())
+			Timber.w("Create file failed!");
 		writeToFile(pictureInputStream, photoFile);
 		return photoFile;
 	}
 
-	private static File tempImageDirectory(@NonNull Context context){
+	private static File tempImageDirectory(@NonNull Context context) throws IOException{
 		File privateTempDir = new File(context.getCacheDir(), DEFAULT_FOLDER_NAME);
-		if(!privateTempDir.exists()) privateTempDir.mkdirs();
+		if(!privateTempDir.exists()) {
+			if(!privateTempDir.mkdirs())
+				throw new IOException("Unable to create dirs!");
+		}
 		return privateTempDir;
 	}
 
@@ -136,11 +143,135 @@ public class FileUtils
 		}
 		else{
 			//If scheme is a File
-			//This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
+			//This will replace white spaces with %20 and also other special characters.
+			// This will avoid returning null values on file name with spaces and special characters.
 			extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
 
 		}
 
 		return extension;
+	}
+
+	public static Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension){
+
+		int originalWidth = bitmap.getWidth();
+		int originalHeight = bitmap.getHeight();
+		int resizedWidth = maxDimension;
+		int resizedHeight = maxDimension;
+
+		if(originalHeight > originalWidth){
+			resizedHeight = maxDimension;
+			resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
+		}
+		else if(originalWidth > originalHeight){
+			resizedWidth = maxDimension;
+			resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
+		}
+		else if(originalHeight == originalWidth){
+			resizedHeight = maxDimension;
+			resizedWidth = maxDimension;
+		}
+		return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
+	}
+
+	public static Bitmap scaleBitmapToWidth(Bitmap bitmap, int maxWidth){
+
+		int originalWidth = bitmap.getWidth();
+		int originalHeight = bitmap.getHeight();
+		int resizedWidth = Math.min(maxWidth, originalWidth);
+		int resizedHeight = GenUtils.getHeightAtWidth(originalWidth, originalHeight, resizedWidth);
+
+		if(resizedWidth == originalWidth) return bitmap;
+		else return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
+	}
+
+	/*public static void correctRotation(CredentialsImage img, Context ctx) throws IOException{
+		File file = img.getFile(ctx);
+		Bitmap bitmap = img.getBitmap();
+		ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+		int exifOrientation = exif.getAttributeInt(
+			ExifInterface.TAG_ORIENTATION,
+			ExifInterface.ORIENTATION_NORMAL);
+
+		int rotate = 0;
+
+		switch (exifOrientation) {
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				rotate = 90;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				rotate = 180;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				rotate = 270;
+				break;
+		}
+
+		if (rotate != 0) {
+			int w = bitmap.getWidth();
+			int h = bitmap.getHeight();
+
+			// Setting pre rotate
+			Matrix mtx = new Matrix();
+			mtx.preRotate(rotate);
+
+			// Rotating Bitmap & convert to ARGB_8888, required by tess
+			bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
+		}
+		img.setBitmap(bitmap.copy(Bitmap.Config.ARGB_8888, true));
+	}*/
+
+	public static Bitmap getResizedBitmapFromURL(String urlStr, File localFile, int maxWidth) throws IOException{
+		Timber.v("getResizedBitmapFromURL(urlStr:%s, localFile:%s, maxWidth:%s)", urlStr, localFile, maxWidth);
+
+		URL url = new URL(urlStr);
+		URLConnection connection = url.openConnection();
+		connection.setDoInput(true);
+		connection.connect();
+		InputStream input = connection.getInputStream();
+		writeToFile(input, localFile);
+		FileInputStream fin = new FileInputStream(localFile);
+
+		//check rotation
+		ExifInterface exif = new ExifInterface(localFile.getAbsolutePath());
+		int exifOrientation = exif.getAttributeInt(
+			ExifInterface.TAG_ORIENTATION,
+			ExifInterface.ORIENTATION_NORMAL);
+
+		int rotate = 0;
+
+		switch(exifOrientation){
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				rotate = 90;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				rotate = 180;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				rotate = 270;
+				break;
+		}
+
+		Bitmap bitmap = BitmapFactory.decodeStream(fin);
+
+		if(rotate != 0){
+			Timber.v("rotating to %s", rotate);
+			int w = bitmap.getWidth();
+			int h = bitmap.getHeight();
+
+			// Setting pre rotate
+			Matrix mtx = new Matrix();
+			mtx.preRotate(rotate);
+
+			// Rotating Bitmap & convert to ARGB_8888, required by tess
+			bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
+		}
+
+		if(maxWidth > 0){
+			//resize
+			bitmap = scaleBitmapToWidth(bitmap, maxWidth);
+		}
+
+		return bitmap.copy(Bitmap.Config.ARGB_8888, true);
 	}
 }

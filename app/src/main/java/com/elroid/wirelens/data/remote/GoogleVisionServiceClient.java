@@ -37,6 +37,8 @@ import javax.inject.Inject;
 import io.reactivex.Single;
 import timber.log.Timber;
 
+import static com.elroid.wirelens.util.FileUtils.scaleBitmapToWidth;
+
 /**
  * Class: com.elroid.wirelens.data.remote.GoogleVisionServiceClient
  * Project: WireLens
@@ -50,7 +52,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 	private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
 	private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
 
-	private static final int MAX_BITMAP_DIM = 1200;
+	private static final int MAX_BITMAP_WIDTH = 1200;
 
 	private final Context ctx;
 
@@ -66,7 +68,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 		return Single.create(emitter -> {
 			try{
 				Bitmap bitmap = image.getBitmap();
-				bitmap = scaleBitmapDown(bitmap, MAX_BITMAP_DIM);
+				bitmap = scaleBitmapToWidth(bitmap, MAX_BITMAP_WIDTH);
 				OcrResponse gvr = callGoogleVision(bitmap);
 				emitter.onSuccess(gvr);
 			}
@@ -75,28 +77,6 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 				emitter.onError(e);
 			}
 		});
-	}
-
-	private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension){
-
-		int originalWidth = bitmap.getWidth();
-		int originalHeight = bitmap.getHeight();
-		int resizedWidth = maxDimension;
-		int resizedHeight = maxDimension;
-
-		if(originalHeight > originalWidth){
-			resizedHeight = maxDimension;
-			resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
-		}
-		else if(originalWidth > originalHeight){
-			resizedWidth = maxDimension;
-			resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
-		}
-		else if(originalHeight == originalWidth){
-			resizedHeight = maxDimension;
-			resizedWidth = maxDimension;
-		}
-		return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
 	}
 
 	private OcrResponse callGoogleVision(Bitmap bitmap) throws IOException{
@@ -187,7 +167,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 
 		String result = text == null ? "" : text.getText();
 		Timber.d("returning google image result: '%s'", result);
-		return new OcrResponse(result);
+		return new OcrResponse(result, OcrResponse.Type.GOOGLE_VISION);
 	}
 
 	/**

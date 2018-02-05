@@ -1,7 +1,5 @@
 package com.elroid.wirelens.model;
 
-import org.json.JSONObject;
-
 /**
  * Class: com.elroid.wirelens.model.GoogleVisionResponse
  * Project: WireLens
@@ -12,11 +10,20 @@ import org.json.JSONObject;
  */
 public class OcrResponse
 {
+	public enum Type
+	{GOOGLE_VISION,TESSERACT,TEST}
+	private Type type;
 	private String text;
 	private String[] lines;
 
 	public OcrResponse(String text){
 		this.text = text;
+		this.type = Type.TEST;
+	}
+
+	public OcrResponse(String text, Type type){
+		this.text = text;
+		this.type = type;
 	}
 
 	public String getText(){
@@ -28,5 +35,9 @@ public class OcrResponse
 			lines = text.split("\n");
 		}
 		return lines;
+	}
+
+	public Type getType(){
+		return type;
 	}
 }

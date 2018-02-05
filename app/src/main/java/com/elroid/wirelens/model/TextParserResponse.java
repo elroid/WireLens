@@ -81,10 +81,10 @@ public class TextParserResponse
 		return result;
 	}
 
-	@Override public String toString(){
+	@Override
+	public String toString(){
 		final StringBuilder sb = new StringBuilder("TextParserResponse{");
-		sb.append("originalText='").append(originalText).append('\'');
-		sb.append(", ssid='").append(ssid).append('\'');
+		sb.append("ssid='").append(ssid).append('\'');
 		sb.append(", password='").append(password).append('\'');
 		sb.append('}');
 		return sb.toString();

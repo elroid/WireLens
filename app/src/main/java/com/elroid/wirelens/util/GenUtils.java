@@ -31,4 +31,12 @@ public class GenUtils
 	public static boolean isUIThread() {
 		return Looper.getMainLooper().getThread() == Thread.currentThread();
 	}
+
+	public static int getWidthAtHeight(int w, int h, int newH) {
+		return newH * w / h;
+	}
+
+	public static int getHeightAtWidth(int w, int h, int newW) {
+		return newW * h / w;
+	}
 }

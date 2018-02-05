@@ -88,6 +88,7 @@ dependencies {
     // Android support libs
     implementation "com.android.support:appcompat-v7:$project.supportLibraryVersion"
     implementation "com.android.support:design:$project.supportLibraryVersion"
+    implementation "com.android.support:exifinterface:$project.supportLibraryVersion"
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
