@@ -28,11 +28,10 @@ public class ConnectionAttempt
 
 	@Override
 	public String toString(){
-		final StringBuilder sb = new StringBuilder("ConnectionAttempt{");
-		sb.append("ssid='").append(ssid).append('\'');
-		sb.append(", password='").append(password).append('\'');
-		sb.append('}');
-		return sb.toString();
+		return "ConnectionAttempt{"
+			+ "ssid='" + ssid + '\'' +
+			", password='" + password + '\'' +
+			'}';
 	}
 
 	@Override

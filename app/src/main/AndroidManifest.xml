@@ -6,12 +6,17 @@
 
 	<uses-feature android:name="android.hardware.wifi"/>
 
+	<!--normal permissions-->
 	<uses-permission android:name="android.permission.INTERNET"/>
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<uses-permission android:name="android.permission.VIBRATE"/>
+
+	<!--runtime/dangerous permissions-->
+	<!--write ext storage for camera/gallery-->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<!--course location for wifi scanning-->
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 	<application
 		android:name=".App"

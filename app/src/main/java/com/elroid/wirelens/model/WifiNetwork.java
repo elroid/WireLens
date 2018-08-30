@@ -50,7 +50,8 @@ public class WifiNetwork
 		return capabilities;
 	}
 
-	@Override public boolean equals(Object o){
+	@Override
+	public boolean equals(Object o){
 		if(this == o) return true;
 		if(!(o instanceof WifiNetwork)) return false;
 
@@ -59,14 +60,16 @@ public class WifiNetwork
 		return ssid.equals(that.ssid);
 	}
 
-	@Override public int hashCode(){
+	@Override
+	public int hashCode(){
 		return ssid.hashCode();
 	}
 
-	@Override public String toString(){
+	@Override
+	public String toString(){
 		final StringBuilder sb = new StringBuilder("WifiNetwork{");
 		sb.append("ssid='").append(ssid).append('\'');
-		sb.append(", capabilities='").append(capabilities).append('\'');
+		//sb.append(", capabilities='").append(capabilities).append('\'');
 		sb.append(", signalLevel=").append(signalLevel);
 		sb.append('}');
 		return sb.toString();

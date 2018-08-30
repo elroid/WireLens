@@ -63,7 +63,7 @@ public class WifiHelper implements WifiDataManager
 			{
 				@Override
 				public void onReceive(Context context, Intent intent){
-					Timber.i("received scan results intent: %s", intent);
+					Timber.v("received scan results intent: %s", intent);
 					List<ScanResult> unsortedResults = wifiManager.getScanResults();
 					ctx.unregisterReceiver(this);
 					emitter.onNext(parseResults(unsortedResults));
@@ -75,7 +75,7 @@ public class WifiHelper implements WifiDataManager
 	}
 
 	private List<WifiNetwork> parseResults(List<ScanResult> unsortedResults){
-		Timber.i("unsorted results are: %s", unsortedResults);
+		Timber.v("unsorted results are: %s", unsortedResults);
 		List<WifiNetwork> result = new ArrayList<>();
 		for(int i = 0; i < unsortedResults.size(); i++){
 			ScanResult scanResult = unsortedResults.get(i);

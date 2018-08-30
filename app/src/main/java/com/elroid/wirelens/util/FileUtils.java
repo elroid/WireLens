@@ -49,7 +49,7 @@ public class FileUtils
 		return photoFile;
 	}
 
-	private static File tempImageDirectory(@NonNull Context context) throws IOException{
+	public static File tempImageDirectory(@NonNull Context context) throws IOException{
 		File privateTempDir = new File(context.getCacheDir(), DEFAULT_FOLDER_NAME);
 		if(!privateTempDir.exists()) {
 			if(!privateTempDir.mkdirs())
