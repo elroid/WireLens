@@ -1,12 +1,10 @@
 package com.elroid.wirelens.ui.base;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.elroid.wirelens.ui.start.StartActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**

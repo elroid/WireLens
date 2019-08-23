@@ -18,21 +18,21 @@
 			android:padding="16dp"
 			>
 
-		<android.support.v7.widget.AppCompatImageButton
+		<ImageButton
 			android:id="@+id/cameraButton"
 			android:layout_width="@dimen/img_button_dim"
 			android:layout_height="@dimen/img_button_dim"
 			android:src="@drawable/ic_camera_24dp"
 			/>
 
-		<android.support.v7.widget.AppCompatImageButton
+		<ImageButton
 			android:id="@+id/galleryButton"
 			android:layout_width="@dimen/img_button_dim"
 			android:layout_height="@dimen/img_button_dim"
 			android:src="@drawable/ic_photo_library_24dp"
 			/>
 
-		<android.support.v7.widget.AppCompatImageButton
+		<ImageButton
 			android:id="@+id/qrButton"
 			android:layout_width="@dimen/img_button_dim"
 			android:layout_height="@dimen/img_button_dim"

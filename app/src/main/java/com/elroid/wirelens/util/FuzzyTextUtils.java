@@ -1,12 +1,11 @@
 package com.elroid.wirelens.util;
 
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.Pair;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.collection.ArrayMap;
+import androidx.core.util.Pair;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 import timber.log.Timber;

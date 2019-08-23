@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Vibrator;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 
 import com.elroid.wirelens.R;
 import com.elroid.wirelens.domain.ConnectionManager;
@@ -22,6 +20,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import dagger.android.AndroidInjection;
 import timber.log.Timber;
 

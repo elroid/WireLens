@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.elroid.wirelens.ui.base.BaseActivity;
+
+import androidx.annotation.Nullable;
 
 /**
  * Class: com.elroid.wirelens.ui.manual.ManualConnectActivity

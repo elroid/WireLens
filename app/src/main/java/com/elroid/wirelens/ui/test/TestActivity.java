@@ -1,35 +1,36 @@
 package com.elroid.wirelens.ui.test;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiConfiguration;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.elroid.wirelens.R;
 import com.elroid.wirelens.domain.WifiDataManager;
-import com.elroid.wirelens.model.WifiNetwork;
 import com.elroid.wirelens.ui.base.BaseActivity;
 import com.elroid.wirelens.ui.base.SchedulersFacade;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
 import dagger.android.AndroidInjection;
-import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 /**

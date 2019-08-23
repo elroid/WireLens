@@ -10,12 +10,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Dimension;
 import android.view.TouchDelegate;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.Dimension;
 import timber.log.Timber;
 
 /**
@@ -48,7 +48,8 @@ public class ViewUtils
 		return Math.round(dpToPx(dp));
 	}
 
-	public static @ColorInt int color(@ColorRes int colorResID, View v){
+	public static @ColorInt
+	int color(@ColorRes int colorResID, View v){
 		return color(colorResID, v.getContext());
 	}
 

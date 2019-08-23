@@ -4,13 +4,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.elroid.wirelens"
         minSdkVersion 17
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "0.1"
         //testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -56,11 +55,8 @@ kapt {
 
 project.ext {
     supportLibraryVersion = "26.1.0"
-    daggerVersion = "2.13"
-    butterKnifeVersion = "8.8.1"
-    rxJavaVersion = "2.1.0"
-    rxAndroidVersion = "2.0.1"
-    rxRelayVersion = "2.0.0"
+    daggerVersion = "2.16"
+    butterKnifeVersion = "10.1.0"
     timberVersion = "4.6.0"
     retrofitVersion = "2.3.0"
     espressoVersion = "3.0.1"
@@ -78,20 +74,25 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'me.xdrop:fuzzywuzzy:1.1.9'
 
-    debugImplementation 'com.android.support:multidex:1.0.2'
+    debugImplementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.github.quickpermissions:quickpermissions-kotlin:0.4.0'
 
     //google vision
+    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
+    //todo we need to ditch this shizzle
     implementation 'com.google.api-client:google-api-client-android:1.20.0' exclude module: 'httpclient'
     implementation 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
     implementation 'com.google.apis:google-api-services-vision:v1-rev368-1.23.0'
 
     // Android support libs
-    implementation "com.android.support:appcompat-v7:$project.supportLibraryVersion"
-    implementation "com.android.support:design:$project.supportLibraryVersion"
-    implementation "com.android.support:exifinterface:$project.supportLibraryVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.exifinterface:exifinterface:1.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.0'
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
+    //implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
 
     // Dagger core
     implementation "com.google.dagger:dagger:$project.daggerVersion"
@@ -106,19 +107,20 @@ dependencies {
     kapt "com.jakewharton:butterknife-compiler:$project.butterKnifeVersion"
 
     // ReactiveX
-    implementation "io.reactivex.rxjava2:rxjava:$project.rxJavaVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$project.rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.10"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.3.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
     // RxRelay
-    implementation "com.jakewharton.rxrelay2:rxrelay:$project.rxRelayVersion"
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
 
     // Timber
-    implementation "com.jakewharton.timber:timber:$project.timberVersion"
+    implementation "com.jakewharton.timber:timber:4.7.1"
 
     // Testing
     testImplementation "junit:junit:4.12"
-    testImplementation "org.robolectric:robolectric:3.2.1"
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
+    testImplementation "org.robolectric:robolectric:3.8"
+    // testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$project.kotlinVersion"
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
 

@@ -9,6 +9,7 @@ import com.elroid.wirelens.injection.DaggerAppComponent;
 
 import javax.inject.Inject;
 
+import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
@@ -59,7 +60,7 @@ public class App extends Application implements HasActivityInjector, HasServiceI
 	@Override protected void attachBaseContext(Context base){
 		super.attachBaseContext(base);
 		if(BuildConfig.DEBUG){
-			android.support.multidex.MultiDex.install(this);
+			MultiDex.install(this);
 		}
 	}
 }

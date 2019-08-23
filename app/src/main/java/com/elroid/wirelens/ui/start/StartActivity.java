@@ -1,14 +1,11 @@
 package com.elroid.wirelens.ui.start;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import com.elroid.wirelens.ui.base.BaseActivity;
-import com.elroid.wirelens.ui.main.MainActivity;
 import com.elroid.wirelens.ui.test.TestActivity;
-import com.elroid.wirelens.ui.test.TestKotlinActivity;
+
+import androidx.annotation.Nullable;
 
 /**
  * Class: com.elroid.wirelens.ui.start.StartActivity
@@ -24,8 +21,8 @@ public class StartActivity extends BaseActivity
 	protected void onCreate(@Nullable Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
-		startActivity(MainActivity.create.intent(this));
-//		startActivity(TestActivity.createIntent(this));
+//		startActivity(MainActivity.create.intent(this));
+		startActivity(TestActivity.createIntent(this));
 //		startActivity(TestKotlinActivity.create.intent(this));
 
 		finish();

@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 
 import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Single;
 import timber.log.Timber;
 

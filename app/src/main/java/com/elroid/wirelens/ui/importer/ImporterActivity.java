@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import com.elroid.wirelens.R;
 import com.elroid.wirelens.data.local.ConnectorService;
@@ -19,6 +18,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
 import dagger.android.AndroidInjection;
 import timber.log.Timber;
 
