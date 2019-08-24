@@ -27,16 +27,16 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(),MainContract.View  {
 
 	companion object create {
 		fun intent(ctx: Context): Intent {
 			return Intent(ctx, MainActivity::class.java)
 		}
+		private val CAMERA_REQUEST = 123
 	}
 
-	@Inject lateinit var wifiManager: WifiManager
-	@Inject lateinit var wifiDataManager: WifiDataManager
+	@Inject lateinit var presenter: MainPresenter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		AndroidInjection.inject(this)
@@ -55,127 +55,211 @@ class MainActivity : BaseActivity() {
 //            startActivityForResult(photoPickerIntent, INTENT_REQUEST_CODE_SELECT_PHOTO)
         }*/
 
-		cameraButton.setOnClickListener { onCameraButtonClicked() }
-		galleryButton.setOnClickListener { onGalleryButtonClicked() }
-		qrButton.setOnClickListener { onQrButtonClicked() }
+		cameraButton.setOnClickListener { presenter.onCameraButtonClicked() }
+		galleryButton.setOnClickListener { presenter.onGalleryButtonClicked() }
 	}
 
-	fun onCameraButtonClicked() {
-		Timber.i("Camera button clicked")
-		/*val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-		startActivityForResult(intent, CAMERA_REQUEST_CODE)*/
-		scanWithPermissionsCheck()
+	override fun showQrCode(qrCode: Bitmap?) {
+		toast("Show qr code not yet implemented")
 	}
 
-	fun onGalleryButtonClicked() {
-		toast("Gallery button clicked")
-		showNetworks()
+	override fun showCurrentWifiData(network: WifiNetwork?, state: WifiState?) {
+		toast("showCurrentWifiData not yet implemented")
 	}
 
-	fun onQrButtonClicked() {
-		toast("Click QR!")
-		val svc = Completable.create({
-			try {
-				val bmp = FileUtils.getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
-				val credImg = CredentialsImage(bmp)
-				ConnectorService.start(this, credImg)
-			} catch (e: Exception) {
-				Timber.e(e, "Error scanning network image: %s", e.message)
-			}
-		})
-		svc.subscribeOn(Schedulers.io()).subscribe()
+	override fun showWifiList(list: MutableList<WifiNetwork>?) {
+		Timber.d("showWifiList(list:%s)", list)
+		toast("showWifiList not yet implemented")
 	}
 
-	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-		if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-
-			// Convert image data to bitmap
-			val bitmap = data.extras!!.get("data") as Bitmap
-
-			// Set the bitmap as the source of the ImageView
-			//(findViewById<View>(R.id.previewImage) as ImageView).setImageBitmap(picture)
-			ConnectorService.start(this, CredentialsImage(bitmap))
-		}
-	}
-
-	private fun scanWithPermissionsCheck() {
-
-		val dialogListener = DialogOnAnyDeniedMultiplePermissionsListener.Builder
-			.withContext(this)
-			.withTitle("Wifi & course location permission")
-			.withMessage("Both change wifi state and coarse location permissions are needed to scan for wifi")
-			.withButtonText(android.R.string.ok)
-			.withIcon(R.mipmap.ic_launcher)
-			.build()
-
-		val actionListener = object : BaseMultiplePermissionsListener() {
-			override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-				if (report!!.areAllPermissionsGranted()) {
-					scan()
-				}
-			}
-		}
-
-		Dexter.withActivity(this)
+	override fun takePictureWithPermissions() {
+		/*Dexter.withActivity(this)
 			.withPermissions(
-				Manifest.permission.ACCESS_COARSE_LOCATION,
-				Manifest.permission.CHANGE_WIFI_STATE,
-				Manifest.permission.VIBRATE,
-				Manifest.permission.ACCESS_WIFI_STATE)
-			.withListener(CompositeMultiplePermissionsListener(dialogListener, actionListener))
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)
+			.withListener(object : MultiplePermissionsListener {
+				override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+					takePicture()
+				}
+
+				override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
+					showPicturePermissionsRationale()
+				}
+			})
+			.check()*/
+		Dexter.withActivity(this)
+			.withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+			.withListener(object : PermissionListener {
+				override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+					takePicture()
+				}
+
+				override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
+					showPicturePermissionsRationale(token)
+				}
+
+				override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+					showError("Permission denied")
+				}
+			})
 			.check()
 	}
 
+	private fun showPicturePermissionsRationale(token: PermissionToken?) {
+		AlertDialog.Builder(ctx)
+			.setMessage("We need file permissions to use photographs from the camera or gallery")
+			.setPositiveButton("Allow") { dialog, which -> token?.continuePermissionRequest() }
+			.setNegativeButton("Deny") {dialog, which -> token?.cancelPermissionRequest()}
+			.create().show()
+	}
 
-	private fun scan() {
+
+	private var imageUri : Uri? = null
+	private fun takePicture() {
+		val values = ContentValues()
+		values.put(MediaStore.Images.Media.TITLE, "New Picture")
+		values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
+		imageUri = contentResolver.insert(
+			MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
 		val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-		startActivityForResult(intent, CAMERA_REQUEST_CODE)
-
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+		startActivityForResult(intent, CAMERA_REQUEST)
 	}
 
-	fun showNetworks() {
-		/*val configs = wifiManager?.getConfiguredNetworks()
-		Timber.i("networks: %s", configs)*/
-		Timber.i("widama:%s", wifiDataManager)
-		wifiDataManager?.scan()
-			?.subscribeOn(Schedulers.io())
-			?.observeOn(AndroidSchedulers.mainThread())
-			?.subscribe({
-				Timber.d("got wifi result: %s", it)
-				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
-				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
-				for (i in it.indices) {
-					val wifiNetwork = it[i]
-					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
-						wifiNetwork.signalLevel))
-				}
-			}, { Timber.w(it, "Error: %s", it.message) },
-				{ Timber.i("Completed") })
-
-		/*?.subscribe(object : Observer<List<WifiNetwork>> {
-			override fun onSubscribe(d: Disposable) {
-				Timber.d("subscribed to scan")
-			}
-
-			override fun onSuccess(wifiNetworks: List<WifiNetwork>) {
-				Timber.d("got wifi result: %s", wifiNetworks)
-				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
-				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
-				for (i in wifiNetworks.indices) {
-					val wifiNetwork = wifiNetworks[i]
-
-					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
-						wifiNetwork.signalLevel))
-					*//*narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.ssid,
-							wifiNetwork.signalLevel))*//*
-					}
-				}
-
-				override fun onError(e: Throwable) {
-					Timber.w(e, "Scan error happened")
-				}
-			})*/
+	override fun openGalleryWithPermissions() {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
+
+	override fun startConnectorService(image: CredentialsImage?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun showConnectorStartedMessage() {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun showError(message: String?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	//@Inject lateinit var wifiManager: WifiManager
+	//@Inject lateinit var wifiDataManager: WifiDataManager
+//	fun onCameraButtonClicked() {
+//		Timber.i("Camera button clicked")
+//		/*val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//		startActivityForResult(intent, CAMERA_REQUEST_CODE)*/
+//		scanWithPermissionsCheck()
+//	}
+//
+//	fun onGalleryButtonClicked() {
+//		toast("Gallery button clicked")
+//		showNetworks()
+//	}
+//
+//	fun onQrButtonClicked() {
+//		toast("Click QR!")
+//		val svc = Completable.create({
+//			try {
+//				val bmp = FileUtils.getBitmapFromURL("http://elroid.com/wirelens/droidcon.jpg");
+//				val credImg = CredentialsImage(bmp)
+//				ConnectorService.start(this, credImg)
+//			} catch (e: Exception) {
+//				Timber.e(e, "Error scanning network image: %s", e.message)
+//			}
+//		})
+//		svc.subscribeOn(Schedulers.io()).subscribe()
+//	}
+//
+//	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+//		if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+//
+//			// Convert image data to bitmap
+//			val bitmap = data.extras!!.get("data") as Bitmap
+//
+//			// Set the bitmap as the source of the ImageView
+//			//(findViewById<View>(R.id.previewImage) as ImageView).setImageBitmap(picture)
+//			ConnectorService.start(this, CredentialsImage(bitmap))
+//		}
+//	}
+//
+//	private fun scanWithPermissionsCheck() {
+//
+//		val dialogListener = DialogOnAnyDeniedMultiplePermissionsListener.Builder
+//			.withContext(this)
+//			.withTitle("Wifi & course location permission")
+//			.withMessage("Both change wifi state and coarse location permissions are needed to scan for wifi")
+//			.withButtonText(android.R.string.ok)
+//			.withIcon(R.mipmap.ic_launcher)
+//			.build()
+//
+//		val actionListener = object : BaseMultiplePermissionsListener() {
+//			override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+//				if (report!!.areAllPermissionsGranted()) {
+//					scan()
+//				}
+//			}
+//		}
+//
+//		Dexter.withActivity(this)
+//			.withPermissions(
+//				Manifest.permission.ACCESS_COARSE_LOCATION,
+//				Manifest.permission.CHANGE_WIFI_STATE,
+//				Manifest.permission.VIBRATE,
+//				Manifest.permission.ACCESS_WIFI_STATE)
+//			.withListener(CompositeMultiplePermissionsListener(dialogListener, actionListener))
+//			.check()
+//	}
+//
+//
+//	private fun scan() {
+//		val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//		startActivityForResult(intent, CAMERA_REQUEST_CODE)
+//
+//	}
+//
+//	fun showNetworks() {
+//		/*val configs = wifiManager?.getConfiguredNetworks()
+//		Timber.i("networks: %s", configs)*/
+//		Timber.i("widama:%s", wifiDataManager)
+//		wifiDataManager.scan()
+//			?.subscribeOn(Schedulers.io())
+//			?.observeOn(AndroidSchedulers.mainThread())
+//			?.subscribe({
+//				Timber.d("got wifi result: %s", it)
+//				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+//				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+//				for (i in it.indices) {
+//					val wifiNetwork = it[i]
+//					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
+//						wifiNetwork.signalLevel))
+//				}
+//			}, { Timber.w(it, "Error: %s", it.message) },
+//				{ Timber.i("Completed") })
+//
+//		/*?.subscribe(object : Observer<List<WifiNetwork>> {
+//			override fun onSubscribe(d: Disposable) {
+//				Timber.d("subscribed to scan")
+//			}
+//
+//			override fun onSuccess(wifiNetworks: List<WifiNetwork>) {
+//				Timber.d("got wifi result: %s", wifiNetworks)
+//				//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+//				// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+//				for (i in wifiNetworks.indices) {
+//					val wifiNetwork = wifiNetworks[i]
+//
+//					Timber.i(String.format("'%s' at %sdb", wifiNetwork.ssid,
+//						wifiNetwork.signalLevel))
+//					*//*narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.ssid,
+//							wifiNetwork.signalLevel))*//*
+//					}
+//				}
+//
+//				override fun onError(e: Throwable) {
+//					Timber.w(e, "Scan error happened")
+//				}
+//			})*/
+//	}
 
 /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
     super.onActivityResult(requestCode, resultCode, data)

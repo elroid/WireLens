@@ -3,6 +3,8 @@ package com.elroid.wirelens.injection;
 import com.elroid.wirelens.data.local.ConnectorService;
 import com.elroid.wirelens.ui.importer.ImporterActivity;
 import com.elroid.wirelens.ui.main.MainActivity;
+import com.elroid.wirelens.ui.main.MainModule;
+import com.elroid.wirelens.ui.main.MainViewModule;
 import com.elroid.wirelens.ui.test.TestActivity;
 
 import dagger.Module;
@@ -19,14 +21,11 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class BuildersModule {
 
-	/*@ContributesAndroidInjector(modules = {LobbyViewModule.class, LobbyModule.class})
-	abstract LobbyActivity bindLobbyActivity();*/
+	@ContributesAndroidInjector(modules = {MainModule.class, MainViewModule.class})
+	abstract MainActivity bindMainActivity();
 
 	@ContributesAndroidInjector
 	abstract ImporterActivity bindImporterActivity();
-
-	@ContributesAndroidInjector
-	abstract MainActivity bindMainActivity();
 
 	@ContributesAndroidInjector
 	abstract TestActivity bindTestActivity();

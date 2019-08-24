@@ -118,7 +118,7 @@ public class ConnectorService extends Service
 			if(vibrator != null && vibrator.hasVibrator()){
 				long[] pattern;
 				if(success)
-					pattern = new long[]{0, 100, 100, 100, 100, 1000};//ta ta daaaaaaa
+					pattern = new long[]{0, 100, 100, 100, 100, 500};//ta ta daaaaaaa
 				else
 					pattern = new long[]{0, 1000, 100, 1000};//ooooooh noooooo
 				vibrator.vibrate(pattern, -1);

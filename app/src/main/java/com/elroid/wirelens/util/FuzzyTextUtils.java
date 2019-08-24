@@ -101,6 +101,7 @@ public class FuzzyTextUtils
 		charAlts.add(new CharAlt('5', 'S'));
 		charAlts.add(new CharAlt('6', 'G'));
 		charAlts.add(new CharAlt('8', 'B'));
+		charAlts.add(new CharAlt('M', 'H'));
 		allAlts = new ArrayList<>();
 		altMap = new ArrayMap<>();
 		for(int i = 0; i < charAlts.size(); i++){

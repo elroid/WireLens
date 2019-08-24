@@ -63,118 +63,183 @@ public class TestActivity extends BaseActivity
 
 		Button button = findViewById(R.id.button);
 		//button.setOnClickListener(view -> scanWithPermissionsCheck());
-		button.setOnClickListener(view -> connect());
+		button.setOnClickListener(view -> takePic());
 	}
 
-	private String printConfiguredNetworks(){
-		List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
-		StringBuilder r = new StringBuilder();
-		for(int i = 0; i < configs.size(); i++){
-			WifiConfiguration wifiConfiguration = configs.get(i);
-			if(i != 0) r.append("\n");
-			//r.append(String.format("'%s'", wifiConfiguration.SSID));
-			r.append(wifiConfiguration.toString());
-		}
-		return r.toString();
-	}
+	Uri imageUri;
+	private static final int PICTURE_RESULT = 1234;
 
-	private void connect(){
-		Timber.d("(before) configured networks: %s", printConfiguredNetworks());
-		/*List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
-		for(int i = 0; i < configs.size(); i++){
-			WifiConfiguration wifiConfiguration = configs.get(i);
-			if(wifiConfiguration.SSID.contains("It's")){
-				Timber.i("removing %s...", wifiConfiguration.SSID);
-				try{
-					wifiManager.removeNetwork(wifiConfiguration.networkId);
-				}
-				catch(Throwable e){
-					Timber.w(e, "Unable to remove network %s", wifiConfiguration.SSID);
-				}
-			}
-		}
-		Timber.d("(after) configured networks: %s", printConfiguredNetworks());*/
-
-		wifiDataManager
-//			.connect("It's a trap! ", "Calamari")//correct
-//			.connect("It's a trap! ", "Calamari2")//wrong password
-//			.connect("It's a trope!", "Calamari")//wrong SSID
-//			.connect("It's a trap!", "Calamari")//space error
-			.connect("Prinky", "") //no auth
-			.subscribeOn(schedulers.io())
-			.observeOn(schedulers.ui())
-			.subscribe(() -> {
-				Timber.i("connect is complete");
-			}, e -> {
-				Timber.e(e, "connect error");
-				toast("Error: " + e.getMessage());
-			});
-	}
-
-	private void scanWithPermissionsCheck(){
-
-		MultiplePermissionsListener dialogListener =
-			DialogOnAnyDeniedMultiplePermissionsListener.Builder
-				.withContext(this)
-				.withTitle("Wifi & course location permission")
-				.withMessage("Both change wifi state and coarse location permissions are needed to scan for wifi")
-				.withButtonText(android.R.string.ok)
-				.withIcon(R.mipmap.ic_launcher)
-				.build();
-
-		BaseMultiplePermissionsListener actionListener = new BaseMultiplePermissionsListener()
-		{
-			@Override
-			public void onPermissionsChecked(MultiplePermissionsReport report){
-				if(report.areAllPermissionsGranted()){
-					scan();
-				}
-			}
-		};
-
+	private void takePic(){
 		Dexter.withActivity(this)
 			.withPermissions(
-				Manifest.permission.ACCESS_COARSE_LOCATION,
-				Manifest.permission.CHANGE_WIFI_STATE)
-			.withListener(new CompositeMultiplePermissionsListener(dialogListener, actionListener))
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)
+			.withListener(new MultiplePermissionsListener(){
+				@Override
+				public void onPermissionsChecked(MultiplePermissionsReport report){
+					takePicAfterPerm();
+				}
+
+				@Override
+				public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token){
+					new AlertDialog.Builder(getCtx())
+						.setMessage("We need file permissions to use photographs from the camera or gallery")
+						.setPositiveButton("Allow", (dialog, which) -> token.continuePermissionRequest())
+						.create().show();
+				}
+			})
 			.check();
 	}
 
+	private void takePicAfterPerm(){
 
-	private void scan(){
-		narf.setText("");
-		wifiDataManager.scan()
-			.subscribeOn(schedulers.io())
-			.observeOn(schedulers.ui())
-			.subscribe(new Observer<List<WifiNetwork>>(){
-				@Override
-				public void onSubscribe(Disposable d){
-					Timber.d("subscribed to scan");
-				}
+		ContentValues values = new ContentValues();
+		values.put(MediaStore.Images.Media.TITLE, "New Picture");
+		values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+		imageUri = getContentResolver().insert(
+			MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-				@Override
-				public void onNext(List<WifiNetwork> wifiNetworks){
-					Timber.d("got wifi result: %s", wifiNetworks);
-					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
-					// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
-					for(int i = 0; i < wifiNetworks.size(); i++){
-						WifiNetwork wifiNetwork = wifiNetworks.get(i);
-
-						narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.getSsid(),
-							wifiNetwork.getSignalLevel()));
-					}
-				}
-
-				@Override
-				public void onError(Throwable e){
-					Timber.w(e, "Scan error happened");
-				}
-
-				@Override
-				public void onComplete(){
-					Timber.i("Scan complete");
-				}
-			});
-
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+		startActivityForResult(intent, PICTURE_RESULT);
 	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		switch(requestCode){
+
+			case PICTURE_RESULT:
+				if(resultCode == Activity.RESULT_OK){
+					try{
+						Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
+							getContentResolver(), imageUri);
+						//imgFoto.setImageBitmap(thumbnail);
+						String imageUrl = getRealPathFromURI(imageUri);
+						Timber.i("got imageUrl: %s", imageUrl);
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
+
+				}
+		}
+	}
+
+	public String getRealPathFromURI(Uri contentUri){
+		String[] proj = {MediaStore.Images.Media.DATA};
+		Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
+	//	private String printConfiguredNetworks(){
+	//		List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
+	//		StringBuilder r = new StringBuilder();
+	//		for(int i = 0; i < configs.size(); i++){
+	//			WifiConfiguration wifiConfiguration = configs.get(i);
+	//			if(i != 0) r.append("\n");
+	//			//r.append(String.format("'%s'", wifiConfiguration.SSID));
+	//			r.append(wifiConfiguration.toString());
+	//		}
+	//		return r.toString();
+	//	}
+	//
+	//	private void connect(){
+	//		Timber.d("(before) configured networks: %s", printConfiguredNetworks());
+	//		/*List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
+	//		for(int i = 0; i < configs.size(); i++){
+	//			WifiConfiguration wifiConfiguration = configs.get(i);
+	//			if(wifiConfiguration.SSID.contains("It's")){
+	//				Timber.i("removing %s...", wifiConfiguration.SSID);
+	//				try{
+	//					wifiManager.removeNetwork(wifiConfiguration.networkId);
+	//				}
+	//				catch(Throwable e){
+	//					Timber.w(e, "Unable to remove network %s", wifiConfiguration.SSID);
+	//				}
+	//			}
+	//		}
+	//		Timber.d("(after) configured networks: %s", printConfiguredNetworks());*/
+	//
+	//		wifiDataManager
+	////			.connect("It's a trap! ", "Calamari")//correct
+	////			.connect("It's a trap! ", "Calamari2")//wrong password
+	////			.connect("It's a trope!", "Calamari")//wrong SSID
+	////			.connect("It's a trap!", "Calamari")//space error
+	//			.connect("Prinky", "") //no auth
+	//			.subscribeOn(schedulers.io())
+	//			.observeOn(schedulers.ui())
+	//			.subscribe(() -> {
+	//				Timber.i("connect is complete");
+	//			}, e -> {
+	//				Timber.e(e, "connect error");
+	//				toast("Error: " + e.getMessage());
+	//			});
+	//	}
+	//
+	//	private void scanWithPermissionsCheck(){
+	//
+	//		MultiplePermissionsListener dialogListener =
+	//			DialogOnAnyDeniedMultiplePermissionsListener.Builder
+	//				.withContext(this)
+	//				.withTitle("Wifi & course location permission")
+	//				.withMessage("Both change wifi state and coarse location permissions are needed to scan for wifi")
+	//				.withButtonText(android.R.string.ok)
+	//				.withIcon(R.mipmap.ic_launcher)
+	//				.build();
+	//
+	//		BaseMultiplePermissionsListener actionListener = new BaseMultiplePermissionsListener()
+	//		{
+	//			@Override
+	//			public void onPermissionsChecked(MultiplePermissionsReport report){
+	//				if(report.areAllPermissionsGranted()){
+	//					scan();
+	//				}
+	//			}
+	//		};
+	//
+	//		Dexter.withActivity(this)
+	//			.withPermissions(
+	//				Manifest.permission.ACCESS_COARSE_LOCATION,
+	//				Manifest.permission.CHANGE_WIFI_STATE)
+	//			.withListener(new CompositeMultiplePermissionsListener(dialogListener, actionListener))
+	//			.check();
+	//	}
+	//
+	//
+	//	private void scan(){
+	//		narf.setText("");
+	//		wifiDataManager.scan()
+	//			.subscribeOn(schedulers.io())
+	//			.observeOn(schedulers.ui())
+	//			.subscribe(new Observer<List<WifiNetwork>>(){
+	//				@Override
+	//				public void onSubscribe(Disposable d){
+	//					Timber.d("subscribed to scan");
+	//				}
+	//
+	//				@Override
+	//				public void onNext(List<WifiNetwork> wifiNetworks){
+	//					Timber.d("got wifi result: %s", wifiNetworks);
+	//					//narf.append("\n"+String.format("'%s' (%s) at %sdb", wifiNetwork.getSsid(),
+	//					// wifiNetwork.getCapabilities(), wifiNetwork.getSignalLevel()));
+	//					for(int i = 0; i < wifiNetworks.size(); i++){
+	//						WifiNetwork wifiNetwork = wifiNetworks.get(i);
+	//
+	//						narf.append("\n" + String.format("'%s' at %sdb", wifiNetwork.getSsid(),
+	//							wifiNetwork.getSignalLevel()));
+	//					}
+	//				}
+	//
+	//				@Override
+	//				public void onError(Throwable e){
+	//					Timber.w(e, "Scan error happened");
+	//				}
+	//
+	//				@Override
+	//				public void onComplete(){
+	//					Timber.i("Scan complete");
+	//				}
+	//			});
+	//
+	//	}
 }
