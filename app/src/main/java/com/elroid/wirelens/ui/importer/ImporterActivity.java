@@ -39,6 +39,7 @@ public class ImporterActivity extends BaseActivity
 
 	@Inject DataManager dataManager;
 	@Inject SchedulersFacade schedulers;
+	@Inject FileUtils fileUtils;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState){
@@ -52,7 +53,7 @@ public class ImporterActivity extends BaseActivity
 			Timber.d("Got imageUri: %s", imageUri);
 			if(imageUri != null){
 				try{
-					File file = FileUtils.pickedExistingPicture(this, imageUri);
+					File file = fileUtils.pickedExistingPicture(imageUri);
 					Timber.d("Got file: %s", file);
 
 					//hello.setText("Analysing...");

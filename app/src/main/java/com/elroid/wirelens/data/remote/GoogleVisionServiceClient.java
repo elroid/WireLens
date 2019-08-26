@@ -10,6 +10,7 @@ import com.elroid.wirelens.BuildConfig;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
 import com.elroid.wirelens.model.CredentialsImage;
 import com.elroid.wirelens.model.OcrResponse;
+import com.elroid.wirelens.util.FileUtils;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -36,8 +37,6 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import io.reactivex.Single;
 import timber.log.Timber;
-
-import static com.elroid.wirelens.util.FileUtils.scaleBitmapToWidth;
 
 /**
  * Class: com.elroid.wirelens.data.remote.GoogleVisionServiceClient
@@ -68,7 +67,7 @@ public class GoogleVisionServiceClient implements GoogleVisionRemoteRepository
 		return Single.create(emitter -> {
 			try{
 				Bitmap bitmap = image.getBitmap();
-				bitmap = scaleBitmapToWidth(bitmap, MAX_BITMAP_WIDTH);
+				bitmap = FileUtils.scaleBitmapToWidth(bitmap, MAX_BITMAP_WIDTH);
 				OcrResponse gvr = callGoogleVision(bitmap);
 				emitter.onSuccess(gvr);
 			}

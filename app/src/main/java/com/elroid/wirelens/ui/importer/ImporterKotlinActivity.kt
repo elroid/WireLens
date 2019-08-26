@@ -36,8 +36,8 @@ class ImporterKotlinActivity : BaseActivity() {
             val imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri?
             Timber.d("Got imageUri: %s", imageUri)
             if (imageUri != null) {
-                val file = FileUtils.pickedExistingPicture(this, imageUri)
-                Timber.d("Got file: %s", file)
+//                val file = FileUtils.pickedExistingPicture(imageUri)
+//                Timber.d("Got file: %s", file)
 
                 //todo import?
 

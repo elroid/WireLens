@@ -74,8 +74,8 @@ class GoogleVisionServiceTest {
 	}*/
 
 	private fun testVisionResponse(fileName: String, ssid: String, pwd: String) {
-		val url = "http://elroid.com/wirelens/"+fileName
-		val bmp = FileUtils.getBitmapFromURL(url);
+		val url = "http://elroid.com/wirelens/$fileName"
+		val bmp = FileUtils.getBitmapFromURL(url)
 		val credImg = CredentialsImage(bmp)
 
 		val testObserver = googlVisionRemoteService.getVisionResponse(credImg).test()
