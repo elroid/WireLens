@@ -48,7 +48,7 @@ public class ImporterActivity extends BaseActivity
 		setContentView(R.layout.activity_main);
 
 		Intent intent = getIntent();
-		if(intent != null){
+		/*if(intent != null){
 			Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			Timber.d("Got imageUri: %s", imageUri);
 			if(imageUri != null){
@@ -57,7 +57,7 @@ public class ImporterActivity extends BaseActivity
 					Timber.d("Got file: %s", file);
 
 					//hello.setText("Analysing...");
-					/*dataManager.extractText(new CredentialsImage(file))
+					*//*dataManager.extractText(new CredentialsImage(file))
 						.subscribeOn(schedulers.io())
 						.observeOn(schedulers.ui())
 						.subscribe(myData -> {
@@ -65,7 +65,7 @@ public class ImporterActivity extends BaseActivity
 							hello.setText(myData.getText());
 						}, e -> {
 							Timber.w(e, "Error getting vision ocr data");
-						});*/
+						});*//*
 					ConnectorService.start(getCtx(), new CredentialsImage(file));
 				}
 				catch(IOException e){
@@ -74,7 +74,7 @@ public class ImporterActivity extends BaseActivity
 			}
 			else toast("no imageUri!");
 		}
-		else toast("no intent!");
+		else toast("no intent!");*/
 	}
 
 

@@ -19,13 +19,6 @@ import com.elroid.wirelens.R;
 import com.elroid.wirelens.domain.WifiDataManager;
 import com.elroid.wirelens.ui.base.BaseActivity;
 import com.elroid.wirelens.ui.base.SchedulersFacade;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -70,7 +63,7 @@ public class TestActivity extends BaseActivity
 	private static final int PICTURE_RESULT = 1234;
 
 	private void takePic(){
-		Dexter.withActivity(this)
+		/*Dexter.withActivity(this)
 			.withPermissions(
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)
 			.withListener(new MultiplePermissionsListener(){
@@ -87,7 +80,7 @@ public class TestActivity extends BaseActivity
 						.create().show();
 				}
 			})
-			.check();
+			.check();*/
 	}
 
 	private void takePicAfterPerm(){

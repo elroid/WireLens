@@ -6,7 +6,9 @@ import android.net.Uri
 import com.elroid.wirelens.model.CredentialsImage
 import com.elroid.wirelens.model.WifiNetwork
 import com.elroid.wirelens.model.WifiState
-import com.karumi.dexter.PermissionToken
+import com.elroid.wirelens.ui.base.BaseActivityView
+import com.elroid.wirelens.ui.base.BasePres
+import java.io.File
 
 /**
  * Class: com.elroid.wirelens.ui.main.MainContract
@@ -16,29 +18,26 @@ import com.karumi.dexter.PermissionToken
  * @author [Elliot Long](mailto:e@elroid.com)
  * Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-internal interface MainContract {
-	interface View {
+interface MainContract {
+	interface View:BaseActivityView {
 		fun showQrCode(qrCode:Bitmap)
 		fun showCurrentWifiData(network:WifiNetwork, state:WifiState)
 		fun showWifiList(list:List<WifiNetwork>)
 
-		fun takePictureWithPermissions(tmpFileUri:Uri):Any?
-		//void showPicturePermissionsRationale(PermissionToken token);
-		//void takePicture();
-
-		fun openGalleryWithPermissions()
-		//boolean showGalleryPermissionsRationale();
-		//void openGallerySelector();
+		fun takePictureWithPermissions(tmpFile:File):Any?
+		fun openGalleryWithPermissions():Any?
+		fun startQrScanner()
 
 		fun startConnectorService(image:CredentialsImage)
 		fun showConnectorStartedMessage()
 
-		fun showError(message:String)
+		//fun showError(message:String)
 	}
 
-	interface Presenter {
+	interface Presenter:BasePres {
 		fun onCameraButtonClicked()
 		fun onGalleryButtonClicked()
+		fun onQrButtonClicked()
 		fun onImageSelected(image:CredentialsImage)
 		fun generateQrCode(network:WifiNetwork)
 

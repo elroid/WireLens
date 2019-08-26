@@ -13,8 +13,10 @@ import com.elroid.wirelens.domain.ConnectionManager;
 import com.elroid.wirelens.domain.DataManager;
 import com.elroid.wirelens.domain.GoogleVisionLocalRepository;
 import com.elroid.wirelens.domain.GoogleVisionRemoteRepository;
+import com.elroid.wirelens.domain.ResourceProvider;
 import com.elroid.wirelens.domain.TextParser;
 import com.elroid.wirelens.domain.WifiDataManager;
+import com.elroid.wirelens.util.ResourceProviderImpl;
 
 import java.util.concurrent.TimeUnit;
 
@@ -109,5 +111,11 @@ public class AppModule
 	ConnectionManager provideConnectionManager(WifiDataManager wifiManager,
 											   ConnectionGuesser guesser){
 		return new ConnectionManager(wifiManager, guesser);
+	}
+
+	@Provides
+	@Singleton
+	ResourceProvider provideResourceProvider(Context ctx){
+		return new ResourceProviderImpl(ctx);
 	}
 }

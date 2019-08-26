@@ -1,146 +1,153 @@
 package com.elroid.wirelens.ui.main
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.ContentValues
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import com.elroid.wirelens.R
 import com.elroid.wirelens.model.CredentialsImage
 import com.elroid.wirelens.model.WifiNetwork
 import com.elroid.wirelens.model.WifiState
+import com.elroid.wirelens.ui.CAMERA_REQUEST_CODE
+import com.elroid.wirelens.ui.GALLERY_REQUEST_CODE
 import com.elroid.wirelens.ui.base.BaseActivity
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.elroid.wirelens.util.FILE_PROVIDER
+import com.elroid.wirelens.util.createString
+import com.elroid.wirelens.util.printCallingMethod
+import com.elroid.wirelens.util.toLog
+import com.github.ajalt.timberkt.d
+import com.github.ajalt.timberkt.v
+import com.github.ajalt.timberkt.w
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 
-class MainActivity : BaseActivity(),MainContract.View  {
+class MainActivity:BaseActivity(), MainContract.View {
 
 	companion object create {
-		fun intent(ctx: Context): Intent {
+		fun intent(ctx:Context):Intent {
 			return Intent(ctx, MainActivity::class.java)
 		}
-		private val CAMERA_REQUEST = 123
 	}
 
-	@Inject lateinit var presenter: MainPresenter
+	@Inject
+	lateinit var presenter:MainPresenter
 
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState:Bundle?) {
 		AndroidInjection.inject(this)
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
 		setSupportActionBar(toolbar)
 
-		/*fab.setOnClickListener { _ ->
-			*//*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()*//**//*
-            //EasyImage.openGallery(this, 0)
-            val photoPickerIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            photoPickerIntent.type = "image*//*"
-//            val INTENT_REQUEST_CODE_SELECT_PHOTO = 0
-//            startActivityForResult(photoPickerIntent, INTENT_REQUEST_CODE_SELECT_PHOTO)
-        }*/
-
 		cameraButton.setOnClickListener { presenter.onCameraButtonClicked() }
 		galleryButton.setOnClickListener { presenter.onGalleryButtonClicked() }
+		qrButton.setOnClickListener { presenter.onQrButtonClicked() }
 	}
 
-	override fun showQrCode(qrCode: Bitmap?) {
-		toast("Show qr code not yet implemented")
+	override fun showQrCode(qrCode:Bitmap) {
+		todo(qrCode)
 	}
 
-	override fun showCurrentWifiData(network: WifiNetwork?, state: WifiState?) {
-		toast("showCurrentWifiData not yet implemented")
+	override fun showCurrentWifiData(network:WifiNetwork, state:WifiState) {
+		todo(network, state)
 	}
 
-	override fun showWifiList(list: MutableList<WifiNetwork>?) {
-		Timber.d("showWifiList(list:%s)", list)
-		toast("showWifiList not yet implemented")
+	override fun showWifiList(list:List<WifiNetwork>) {
+		todo(list)
 	}
 
-	override fun takePictureWithPermissions() {
-		/*Dexter.withActivity(this)
-			.withPermissions(
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)
-			.withListener(object : MultiplePermissionsListener {
-				override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-					takePicture()
+	private val opts:QuickPermissionsOptions by lazy {
+		QuickPermissionsOptions(
+			rationaleMessage = createString(R.string.permission_justification_camera)
+		)
+	}
+
+	override fun takePictureWithPermissions(tmpFile:File) = runWithPermissions(
+		Manifest.permission.CAMERA, options = opts) {
+		val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+		getCtx().let { ctx ->
+			pictureIntent.resolveActivity(ctx.packageManager)?.also {
+				try {
+					val uri = FileProvider.getUriForFile(ctx, FILE_PROVIDER, tmpFile)
+					d { "file:$tmpFile, uri:$uri" }
+					pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+					startActivityForResult(pictureIntent, CAMERA_REQUEST_CODE)
+
+				} catch(ex:Exception) {
+					w(ex)
+					showError("Unable to create file")
 				}
-
-				override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
-					showPicturePermissionsRationale()
-				}
-			})
-			.check()*/
-		Dexter.withActivity(this)
-			.withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-			.withListener(object : PermissionListener {
-				override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-					takePicture()
-				}
-
-				override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
-					showPicturePermissionsRationale(token)
-				}
-
-				override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-					showError("Permission denied")
-				}
-			})
-			.check()
-	}
-
-	private fun showPicturePermissionsRationale(token: PermissionToken?) {
-		AlertDialog.Builder(ctx)
-			.setMessage("We need file permissions to use photographs from the camera or gallery")
-			.setPositiveButton("Allow") { dialog, which -> token?.continuePermissionRequest() }
-			.setNegativeButton("Deny") {dialog, which -> token?.cancelPermissionRequest()}
-			.create().show()
-	}
-
-
-	private var imageUri : Uri? = null
-	private fun takePicture() {
-		val values = ContentValues()
-		values.put(MediaStore.Images.Media.TITLE, "New Picture")
-		values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
-		imageUri = contentResolver.insert(
-			MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
-		val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-		startActivityForResult(intent, CAMERA_REQUEST)
+			}
+		}
 	}
 
 	override fun openGalleryWithPermissions() {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		val intent = Intent(Intent.ACTION_PICK)
+		val imageTypes = arrayOf("image/*")//, "image/png", "image/jpg")
+		intent.type = imageTypes[0]
+		intent.putExtra(Intent.EXTRA_MIME_TYPES, imageTypes)
+		try {
+			startActivityForResult(Intent.createChooser(intent, "Select an image"),
+				GALLERY_REQUEST_CODE)
+
+		} catch(ex: Exception) {
+			w(ex)
+			showError("Unable to open gallery: ${ex.message}")
+		}
 	}
 
-	override fun startConnectorService(image: CredentialsImage?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun startQrScanner() {
+		todo()
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		v { "onActivityResult(request:$requestCode, result:$resultCode, data:${data?.toLog()})" }
+		when(requestCode) {
+			GALLERY_REQUEST_CODE -> {
+				when(resultCode) {
+					Activity.RESULT_OK -> {
+						data?.data?.let { uri ->
+							presenter.onGalleryImageSelected(uri)
+						}
+					}
+					Activity.RESULT_CANCELED -> toast("Image import cancelled")
+					else -> w { "Unrecognised result:$resultCode" }
+				}
+			}
+			CAMERA_REQUEST_CODE -> {
+				when(resultCode) {
+					Activity.RESULT_OK -> {
+						presenter.onCameraImageSelected()
+					}
+					Activity.RESULT_CANCELED -> toast("Image capture cancelled")
+					else -> w { "Unrecognised result:$resultCode" }
+				}
+			}
+			else -> super.onActivityResult(requestCode, resultCode, data)
+		}
+	}
+
+	override fun startConnectorService(image:CredentialsImage) {
+		todo(image)
 	}
 
 	override fun showConnectorStartedMessage() {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+		todo()
 	}
 
-	override fun showError(message: String?) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
+
+
 
 	//@Inject lateinit var wifiManager: WifiManager
 	//@Inject lateinit var wifiDataManager: WifiDataManager

@@ -19,6 +19,7 @@ import java.util.UUID
 import androidx.exifinterface.media.ExifInterface
 import com.elroid.wirelens.BuildConfig
 import com.github.ajalt.timberkt.d
+import com.github.ajalt.timberkt.i
 import com.github.ajalt.timberkt.v
 import com.github.ajalt.timberkt.w
 import timber.log.Timber
@@ -59,7 +60,7 @@ class FileUtils @Inject constructor(val ctx:Context) {
 	@Throws(IOException::class)
 	fun tempImageDirectory():File = tempImageDirectory(ctx)
 
-	private fun createTmpFile(): File {
+	fun createTmpFile(): File {
 		val filesDir: File = ctx.filesDir ?: throw IOException("Unable to find files dir")
 		val storageDir = File(filesDir, DEFAULT_FOLDER_NAME)
 		if(!storageDir.exists()) storageDir.mkdirs()
@@ -70,6 +71,19 @@ class FileUtils @Inject constructor(val ctx:Context) {
 
 	@Throws(IOException::class)
 	fun createFile(bitmap:Bitmap):File = createFile(ctx, bitmap)
+
+	fun copyToFile(uri:Uri, file: File){
+		i{"copyToTmpAndOpen(uri:$uri)"}
+		ctx.contentResolver?.openInputStream(uri)?.let { inputStream ->
+			// copy input stream to file
+			val outputStream = FileOutputStream(file)
+			inputStream.use { input ->
+				outputStream.use { output ->
+					input.copyTo(output)
+				}
+			}
+		}
+	}
 
 	companion object {
 
@@ -255,6 +269,8 @@ class FileUtils @Inject constructor(val ctx:Context) {
 			return bitmap.copy(Bitmap.Config.ARGB_8888, true)
 		}
 
+		@Throws(IOException::class)
+		@JvmStatic
 		fun loadBitmap(imgFile:File): Bitmap {
 			val rawBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
 				?: throw IOException("unable to load bitmap: $this")

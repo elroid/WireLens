@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.elroid.wirelens"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "0.1"
@@ -67,15 +67,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Project-specific
-    //compile 'com.github.jkwiecien:EasyImage:2.0.4'
-    //compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     implementation 'org.greenrobot:eventbus:3.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    implementation 'com.karumi:dexter:4.2.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'me.xdrop:fuzzywuzzy:1.1.9'
 
     debugImplementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.quickpermissions:quickpermissions-kotlin:0.4.0'
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
     //google vision
     implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
@@ -115,7 +113,7 @@ dependencies {
     implementation "com.jakewharton.rxrelay2:rxrelay:2.1.0"
 
     // Timber
-    implementation "com.jakewharton.timber:timber:4.7.1"
+    implementation 'com.github.ajalt:timberkt:1.5.1'
 
     // Testing
     testImplementation "junit:junit:4.12"

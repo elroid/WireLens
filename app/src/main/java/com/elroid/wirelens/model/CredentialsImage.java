@@ -2,6 +2,7 @@ package com.elroid.wirelens.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.elroid.wirelens.util.FileUtils;
 
@@ -31,7 +32,7 @@ public class CredentialsImage
 
 	public Bitmap getBitmap() throws IOException{
 		if(bitmap == null)
-			bitmap = FileUtils.createBitmapFromFile(imageFile);
+			bitmap = FileUtils.loadBitmap(imageFile);
 		return bitmap;
 	}
 

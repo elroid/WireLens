@@ -2,4 +2,7 @@
 	<string name="action_settings">Settings</string>
 	<string name="notification_title">Wirelens is scanning your image</string>
 	<string name="notification_message">When we\'re finished, we\'ll let you know!</string>
+
+	<string name="permission_justification_camera">We need camera permissions to take pictures of receipts</string>
+	<string name="err_unspecified">Sorry, an error occurred.</string>
 </resources>
