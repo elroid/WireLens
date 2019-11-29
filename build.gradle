@@ -4,7 +4,7 @@ buildscript {
 
     ext{
         androidGradlePluginVersion = '3.5.2'
-        kotlinVersion = '1.3.0'
+        kotlinVersion = '1.3.60'
     }
 
     repositories {
@@ -14,7 +14,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41"
     }
 }
 

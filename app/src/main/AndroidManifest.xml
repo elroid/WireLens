@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.elroid.wirelens"
-	xmlns:android="http://schemas.android.com/apk/res/android"
 	>
 
-	<uses-feature android:name="android.hardware.wifi" android:required="true"/>
-	<uses-feature android:name="android.hardware.camera" android:required="true" />
+	<uses-feature
+		android:name="android.hardware.wifi"
+		android:required="true"
+		/>
+	<uses-feature
+		android:name="android.hardware.camera"
+		android:required="true"
+		/>
 
 	<!--normal permissions-->
-	<uses-permission android:name="android.permission.INTERNET"/>
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 	<!--runtime/dangerous permissions-->
 	<!--write ext storage for camera/gallery-->
 	<uses-permission android:name="android.permission.CAMERA" />
 	<!--course location for wifi scanning-->
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 	<application
 		android:name=".App"
@@ -37,8 +43,8 @@
 			android:theme="@style/AppTheme.NoActionBar"
 			>
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<category android:name="android.intent.category.LAUNCHER"/>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
@@ -48,9 +54,9 @@
 			android:theme="@style/AppTheme.NoActionBar"
 			>
 			<intent-filter>
-				<action android:name="android.intent.action.SEND"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<data android:mimeType="image/*"/>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="image/*" />
 			</intent-filter>
 		</activity>
 
@@ -58,19 +64,13 @@
 			android:name=".ui.main.MainActivity"
 			android:theme="@style/AppTheme.NoActionBar"
 			/>
-		<activity
-			android:name=".ui.manual.ManualConnectActivity"
-			/>
+		<activity android:name=".ui.manual.ManualConnectActivity" />
 
 
-		<activity
-			android:name=".ui.test.TestActivity"
-			/>
-		<activity
-			android:name=".ui.test.TestKotlinActivity"
-			/>
+		<activity android:name=".ui.test.TestActivity" />
+		<activity android:name=".ui.test.TestKotlinActivity" />
 
-		<service android:name=".data.local.ConnectorService"/>
+		<service android:name=".data.local.ConnectorService" />
 
 		<provider
 			android:name="androidx.core.content.FileProvider"

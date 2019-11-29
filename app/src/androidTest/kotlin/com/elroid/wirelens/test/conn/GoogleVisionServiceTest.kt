@@ -27,11 +27,6 @@ class GoogleVisionServiceTest {
 //	fun getVisionResponse_givenPinky_returnsCorrectResponse() {
 //		testVisionResponse("pinky.jpg", "Pinky", "narfnarf")
 //	}
-//
-//	@Test
-//	fun getVisionResponse_givenTrap_returnsCorrectResponse() {
-//		testVisionResponse("trap.jpg", "It's a Trap!", "Calamari")
-//	}
 
 	/*@Test
 	fun getVisionResponse_givenDroidcon_returnsCorrectResponse() {
