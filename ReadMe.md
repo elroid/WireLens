@@ -22,7 +22,7 @@ This is an idea that I started working on in the beginning of 2018 but came up s
 Feel free to explore the code base which is a working (if not yet terribly functional) Android app. 
 A few highlights:
 
-* We need to search for common words like "Network" and "Password" and recognise them even if they come through as "Ne7w0rK" or "P4S5w0rd". Fuzzy text matching with specific attetnion to the challenges of OCR is therefore a must. My [FuzzyTextUtils class](app/src/main/java/com/elroid/wirelens/util/FuzzyTextUtils.java) attempts to do just this by searching for different combinations of commonly confused letters.
+* We need to search for common words like "Network" and "Password" and recognise them even if they come through as "Ne7w0rK" or "P4S5w0rd". Fuzzy text matching with specific attetnion to the challenges of OCR is therefore a must. My [FuzzyTextUtils](app/src/main/java/com/elroid/wirelens/util/FuzzyTextUtils.kt) class attempts to do just this by searching for different combinations of commonly confused letters.
 
 * Combining the OCR results with awarenesss of the WiFi landscape requires some complicated logic. The  [ConnectionGuesser](app/src/main/java/com/elroid/wirelens/domain/ConnectionGuesser.java) class is my attempt at making a fully testable process that will ensure that a successful connection happens as quickly as possible.
 
