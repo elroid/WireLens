@@ -58,3 +58,4 @@ docs/device*.png
 /app/libobjectbox-macos-x64.dylib
 /docs/ic_launcher512.png
 /app/fabric.properties
+dev**
