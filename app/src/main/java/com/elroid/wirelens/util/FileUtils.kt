@@ -179,8 +179,8 @@ class FileUtils @Inject constructor(val ctx:Context) {
 				//If scheme is a File
 				//This will replace white spaces with %20 and also other special characters.
 				// This will avoid returning null values on file name with spaces and special characters.
-				uri.path?.apply{
-					MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(File(this)).toString())
+				uri.path?.let{
+					MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(File(it)).toString())
 				}
 			}
 		}

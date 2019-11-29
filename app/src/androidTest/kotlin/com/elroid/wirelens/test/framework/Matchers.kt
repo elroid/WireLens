@@ -1,13 +1,16 @@
 package com.elroid.wirelens.test.framework
 
 import android.app.Activity
-import android.support.annotation.IdRes
-import android.support.annotation.StringRes
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents.intended
-import android.support.test.espresso.intent.matcher.IntentMatchers
-import android.support.test.espresso.matcher.ViewMatchers.*
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 
 class Matchers {
   fun <T : Activity> nextOpenActivityIs(clazz: Class<T>) {
@@ -15,11 +18,11 @@ class Matchers {
   }
 
   fun viewIsVisible(@IdRes viewId: Int) {
-    onView(withId(viewId)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withId(viewId)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
   }
 
   fun viewIsVisibleAndContainsText(@StringRes stringResource: Int) {
-    onView(withText(stringResource)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    onView(withText(stringResource)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
   }
 
   fun viewContainsText(@IdRes viewId: Int, @StringRes stringResource: Int) {

@@ -46,6 +46,7 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/DEPENDENCIES'
     }
 }
 
@@ -76,21 +77,21 @@ dependencies {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
     //google vision
-    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
     //todo we need to ditch this shizzle
-    implementation 'com.google.api-client:google-api-client-android:1.20.0' exclude module: 'httpclient'
-    implementation 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
-    implementation 'com.google.apis:google-api-services-vision:v1-rev368-1.23.0'
+    implementation 'com.google.api-client:google-api-client-android:1.30.5'// exclude module: 'httpclient'
+    implementation 'com.google.http-client:google-http-client-gson:1.33.0'// exclude module: 'httpclient'
+    implementation 'com.google.apis:google-api-services-vision:v1-rev444-1.25.0'
 
     // Android support libs
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.0'
 
     // Kotlin
     //implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$project.kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1"
 
     // Dagger core
     implementation "com.google.dagger:dagger:$project.daggerVersion"
@@ -115,6 +116,8 @@ dependencies {
     // Timber
     implementation 'com.github.ajalt:timberkt:1.5.1'
 
+    implementation "androidx.annotation:annotation:1.1.0"
+
     // Testing
     testImplementation "junit:junit:4.12"
     testImplementation "org.robolectric:robolectric:3.8"
@@ -122,9 +125,16 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$project.kotlinVersion"
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
 
-    androidTestImplementation "com.android.support.test:runner:$project.supportTestVersion"
-    androidTestImplementation "com.android.support.test:rules:$project.supportTestVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$project.espressoVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-intents:$project.espressoVersion"
-    androidTestImplementation "com.android.support:support-annotations:$project.supportLibraryVersion"
+    //androidTestImplementation "com.android.support.test:runner:$project.supportTestVersion"
+    //androidTestImplementation "com.android.support.test:rules:$project.supportTestVersion"
+    //androidTestImplementation "com.android.support.test.espresso:espresso-core:$project.espressoVersion"
+//    androidTestImplementation "com.android.support.test.espresso:espresso-intents:$project.espressoVersion"
+   // androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
+    //androidTestImplementation "com.android.support:support-annotations:$project.supportLibraryVersion"
+
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestImplementation "androidx.test:rules:1.2.0"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.2.0"
+
 }

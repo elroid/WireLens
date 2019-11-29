@@ -1,20 +1,14 @@
 package com.elroid.wirelens.test.conn
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.InstrumentationRegistry.getTargetContext
 import com.elroid.wirelens.data.local.SimpleTextParser
 import com.elroid.wirelens.data.remote.GoogleVisionServiceClient
 import com.elroid.wirelens.model.CredentialsImage
 import com.elroid.wirelens.model.TextParserResponse
 import com.elroid.wirelens.util.FileUtils
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import timber.log.Timber
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 /**
@@ -29,16 +23,15 @@ class GoogleVisionServiceTest {
 
 	private val googlVisionRemoteService = GoogleVisionServiceClient(getTargetContext())
 
-	@Test
-	fun getVisionResponse_givenPinky_returnsCorrectResponse() {
-		testVisionResponse("pinky.jpg", "Pinky", "narfnarf")
-	}
-
-	@Test
-	fun getVisionResponse_givenTrap_returnsCorrectResponse() {
-		//testVisionResponse("trap.jpg", "It's a Trap!", "Calamari")//Correct
-		testVisionResponse("trap.jpg", "It's a Trap!", "Calamar")//Actual
-	}
+//	@Test
+//	fun getVisionResponse_givenPinky_returnsCorrectResponse() {
+//		testVisionResponse("pinky.jpg", "Pinky", "narfnarf")
+//	}
+//
+//	@Test
+//	fun getVisionResponse_givenTrap_returnsCorrectResponse() {
+//		testVisionResponse("trap.jpg", "It's a Trap!", "Calamari")
+//	}
 
 	/*@Test
 	fun getVisionResponse_givenDroidcon_returnsCorrectResponse() {

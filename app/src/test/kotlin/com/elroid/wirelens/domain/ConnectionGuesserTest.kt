@@ -86,7 +86,7 @@ class ConnectionGuesserTest: RoboelectricTest() {
 	}
 
 	@Test
-	fun guess_givenSsidNotFound_emitsError(){
+	fun guess_givenSsidNotFound_emitsNoAttempts(){
 		//given
 		val tpro = Observable.just(TextParserResponse("Some Other Network", "myPassword"))
 		//val expected = ConnectionAttempt("Some Other Network", "myPassword")
@@ -95,10 +95,8 @@ class ConnectionGuesserTest: RoboelectricTest() {
 		val testObserver = connectionGuesser.guess(tpro).test()
 
 		//then
-		testObserver.assertError(Exception::class.java)
-		/*assertEquals(testObserver.valueCount(), 1)
-		val actual = testObserver.values().get(0)
-		assertEquals(expected, actual)*/
+		testObserver.assertNoErrors()
+		assertEquals(testObserver.valueCount(), 0)
 	}
 
 	@Test
@@ -115,9 +113,9 @@ class ConnectionGuesserTest: RoboelectricTest() {
 		//then
 		testObserver.assertNoErrors()
 		assertEquals(3, testObserver.valueCount())
-		assertEquals(expected0, testObserver.values().get(0))
-		assertEquals(expected1, testObserver.values().get(1))
-		assertEquals(expected2, testObserver.values().get(2))
+		assertEquals(expected0, testObserver.values()[0])
+		assertEquals(expected1, testObserver.values()[1])
+		assertEquals(expected2, testObserver.values()[2])
 	}
 
 	@Test
