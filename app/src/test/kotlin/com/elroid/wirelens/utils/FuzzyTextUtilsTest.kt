@@ -17,19 +17,21 @@ import kotlin.test.assertTrue
  * @author <a href="mailto:e@elroid.com">Elliot Long</a>
  *         Copyright (c) 2018 Elroid Ltd. All rights reserved.
  */
-class FuzzyTextUtilsTest : RoboelectricTest() {
+class FuzzyTextUtilsTest:RoboelectricTest() {
 
 	@Test
 	fun sortListBySimilarity_givenStringList_returnSorted() {
 		//given/when
 		val toMatch = "Closest"
 		val list = listOf(
-			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet", "Closer", "Closest", "Cleaner"
+			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet",
+			"Closer", "Closest", "Cleaner"
 		)
 
 		//then
 		val expected = listOf(
-			"Closest", "Closet", "Closer", "Clod", "Cleanest", "Clearest", "Comet", "Cleaner", "Carrion", "Different", "Diff"
+			"Closest", "Closet", "Closer", "Clod", "Cleanest", "Clearest", "Comet", "Cleaner",
+			"Carrion", "Different", "Diff"
 		)
 		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list)
 		//Timber.i("actual: %s", actual)
@@ -44,14 +46,15 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 		//given/when
 		val toMatch = "Closest"
 		val list = listOf(
-			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet", "Closer", "Closest", "Cleaner"
+			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet",
+			"Closer", "Closest", "Cleaner"
 		)
 
 		//then
 		val expected = listOf(
 			"Closest", "Closet", "Closer"
 		)
-		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, null, 70, 5)
+		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, minScore = 70, maxLen = 5)
 		//Timber.i("actual: %s", actual)
 		assertArrayEquals(
 			expected.toTypedArray(),
@@ -71,7 +74,7 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 		val expected = listOf(
 			"Closest", "CLOSET", "Closer"
 		)
-		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, null, 70, 5)
+		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, minScore = 70, maxLen = 5)
 		//Timber.i("actual: %s", actual)
 		assertArrayEquals(
 			expected.toTypedArray(),
@@ -84,14 +87,15 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 		//given/when
 		val toMatch = "Closest"
 		val list = listOf(
-			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet", "Closer", "Closest", "Cleaner"
+			"Cleanest", "Carrion", "Different", "Closet", "Diff", "Clod", "Clearest", "Comet",
+			"Closer", "Closest", "Cleaner"
 		)
 
 		//then
 		val expected = listOf(
 			"Closest", "Closet"
 		)
-		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, null, 70, 2)
+		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, minScore = 70, maxLen = 2)
 		//Timber.i("actual: %s", actual)
 		assertArrayEquals(
 			expected.toTypedArray(),
@@ -119,7 +123,8 @@ class FuzzyTextUtilsTest : RoboelectricTest() {
 			Narf("Closer", 23),
 			Narf("Cleanest", 111)
 		)
-		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, { it.name }, 60, 0)
+		val actual = FuzzyTextUtils.sortListBySimilarity(toMatch, list, minScore = 60, maxLen = 3)
+		{ it.name }
 		//Timber.i("actual: %s", actual)
 		assertArrayEquals(
 			expected.toTypedArray(),

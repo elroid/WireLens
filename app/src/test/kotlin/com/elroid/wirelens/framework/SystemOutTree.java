@@ -1,6 +1,5 @@
 package com.elroid.wirelens.framework;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 /**
