@@ -18,7 +18,7 @@ So, in the ideal case, we seamlessly connect you after simply taking a photo. In
 
 This is an idea that I started working on in the beginning of 2018 but came up short when I learned that on-device OCR was just not up to the task. Now with MLKit proving so capable, I’m hoping to finally bring the idea to life. It’s an app I constantly find myself wanting as a user, which I find is the best indicator that you’re building something worth making!
 
-###Sample Code
+### Sample Code
 Feel free to explore the code base which is a working (if not yet terribly functional) Android app. 
 A few highlights:
 
@@ -28,38 +28,38 @@ A few highlights:
 
 * For something like this with a complicated rulebase it's important to make sure you don't regress as you add support for different input formats so I made the decision early to make development fully test driven, with [unit tests](/app/src/test/kotlin/com/elroid/wirelens/utils), [business logic tests](app/src/test/kotlin/com/elroid/wirelens/domain) and [UI tests](app/src/androidTest/kotlin/com/elroid/wirelens/test/ui) prioritised.
 
-###Ways Google can help
+### Ways Google can help
 * I am initially going down the route of fuzzy text matching and rule-based parsing, but I would like to see if there’s a way to bring further machine learning techniques to improve recognition. It occurs to me that there are certain patterns that recur in these passwords such as the habit of creating passwords using words with certain letters replaced by numbers. I’d like to see how machine learning of the structure of passwords could be used to improve password recognition.
 * With the changes to wifi capability with Android 10 I could use advice on how best to use the new tools to connect and/or suggest wifi network credentials on current and past platforms
 
-###Timeline
+### Timeline
 I aim to put out one release each month:
 
-####0.5 - MVP (3 January 2020)
+#### 0.5 - MVP (3 January 2020)
 
 * Allows import from camera or gallery with basic image parsing
 * Adds guessed connection as a suggested network (Android Q/10+) 
 * Basic text output of status (implemented as Foreground Service)
 
-####0.6 - Refinement (7 February 2020)
+#### 0.6 - Refinement (7 February 2020)
 	
 * Manual entry screen showing image overlayed with a text box for manual entry
 * Shows connection attempts as a list with button to bring up manual entry
 * Adds direct connect to WiFi for apps running N/9 and below
 
-####0.7 - Add QR code capabilities (6 March 2020)
+#### 0.7 - Add QR code capabilities (6 March 2020)
 	
 * Adds list of successful WiFi logins with QR-code display
 * Add QR code reading function (compatible with Android10 QR codes) 
 * Continue to refine rules for different configurations of input 
 
-####0.8 - Add ML (3 April 2020)
+#### 0.8 - Add ML (3 April 2020)
 	
 * Start on ML models	
 * Add cloud storage of credential images and results for model training
 * Refinement of UI, landscape support etc
 
-####1.0 - Public Release (1 May 2020)
+#### 1.0 - Public Release (1 May 2020)
 	
 * Add onboarding pages slides and UI polish
 * Testing on various devices
