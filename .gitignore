@@ -53,9 +53,6 @@ captures/
 .DS_Store
 projectFilesBackup*
 docs/device*.png
-/.idea/caches/build_file_checksums.ser
-/.idea/assetWizardSettings.xml
-/app/libobjectbox-macos-x64.dylib
 /docs/ic_launcher512.png
 /app/fabric.properties
 dev**
